@@ -1,14 +1,21 @@
 from django.db import models
 import datetime
 from django.contrib.auth.models import User
-from django.db.models.fields.related import ManyToOneRel
-from timezone_field import TimeZoneField
+
+
+class Retail(models.Model):
+    # This line is required. Links UserProfile to a User model instance.
+    user = models.OneToOneField(User)
+
+    shop_name = models.CharField(max_length=30)
+    logo_url = models.URLField(blank=True)
+    location_level = models.PositiveSmallIntegerField()
+    location_unit = models.PositiveSmallIntegerField()
 
 
 # Create your models here.
 class Promotion(models.Model):
-    owner = models.ManyToOneRel(Retail)
-    grabbed_by = models.ManyToManyField(Consumer)
+    retail = models.ForeignKey(Retail)
 
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=5000)
@@ -16,9 +23,6 @@ class Promotion(models.Model):
     time_expiry = models.DateTimeField(auto_now=True)  # must be > current time
     image_url = models.CharField(max_length=300)
     created_at = models.DateTimeField(default=datetime.datetime.now())
-
-    def __str__(self):
-        return self.title
 
 
 class PromotionPriceReduction(Promotion):
@@ -38,6 +42,7 @@ class Consumer(models.Model):
     # This line is required. Links UserProfile to a User model instance.
     user = models.OneToOneField(User)
     favorite_shops = models.ManyToManyField(Retail)
+    grabbed = models.ManyToManyField(Promotion)
 
     # The additional attributes we wish to include.
     website = models.URLField(blank=True)
@@ -45,22 +50,12 @@ class Consumer(models.Model):
     point = models.PositiveIntegerField()
 
 
-class Retail(models.Model):
-    # This line is required. Links UserProfile to a User model instance.
-    user = models.OneToOneField(User)
-
-    shop_name = models.CharField(max_length=30)
-    logo_url = models.URLField(blank=True)
-    location_level = models.PositiveSmallIntegerField()
-    location_unit = models.PositiveSmallIntegerField()
-
-
 class Installation(models.Model):
-    customer = models.ManyToOneRel(Consumer)
+    customer = models.ForeignKey(Consumer)
 
     badge = models.PositiveIntegerField()
     device_token = models.CharField(max_length=250)
     device_type = models.CharField(max_length=6)
-    timezone = TimeZoneField()
+    timezone = models.CharField(max_length=20, default='Asia/Singapore')
     app_name = models.CharField(max_length=20)
     app_version = models.PositiveIntegerField()
