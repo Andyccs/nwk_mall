@@ -1,4 +1,4 @@
-from nwk.models import UserProfile
+from nwk.models import Consumer
 from django.contrib.auth.models import User
 from django import forms
 
@@ -11,5 +11,5 @@ class UserForm(forms.ModelForm):
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
-        model = UserProfile
+        model = Consumer
         fields = ('website', 'picture')
