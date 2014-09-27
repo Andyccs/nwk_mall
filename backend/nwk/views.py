@@ -1,12 +1,15 @@
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
-
-# Create your views here.
 from nwk.forms import UserForm, UserProfileForm
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from nwk.serializers import UserSerializer, GroupSerializer
+
 
 def index(request):
     return HttpResponse("Hello, world. You're at the nwk index.\n")
+
 
 def register(request):
     # Like before, get the request's context.
@@ -67,3 +70,19 @@ def register(request):
             'register.html',
             {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
             context)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
