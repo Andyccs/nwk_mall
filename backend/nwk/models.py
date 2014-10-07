@@ -50,7 +50,7 @@ class Consumer(models.Model):
     point = models.PositiveIntegerField()
 
 
-class Installation(models.Model):
+class Application(models.Model):
     customer = models.ForeignKey(Consumer)
 
     badge = models.PositiveIntegerField()
