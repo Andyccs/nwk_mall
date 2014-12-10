@@ -67,13 +67,25 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # }
 
 # postgreSQL database setting
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'nwk',
+#         'USER': 'postgres',
+#         'PASSWORD': 'root',
+#         'HOST': ''
+#     }
+# }
+
+# MySQL support
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'nwk',
-        'USER': 'postgres',
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'shopgrab_db',
+        'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': ''
+        'HOST': 'localhost',
+        'PORT': '8889',
     }
 }
 
