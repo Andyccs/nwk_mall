@@ -1,0 +1,6 @@
+--allow-all-external mysql-connector-python
+djangorestframework
+markdown
+django-filter
+django-oauth-toolkit
+requests
