@@ -3,9 +3,16 @@ import datetime
 from django.contrib.auth.models import User
 
 
+class Mall(models.Model):
+    mall_name = models.CharField(max_length=30)
+    address = models.CharField(max_length=60)
+    region = models.CharField(max_length=30)
+
+
 class Retail(models.Model):
     # This line is required. Links UserProfile to a User model instance.
     user = models.OneToOneField(User)
+    mall = models.ForeignKey(Mall)
 
     shop_name = models.CharField(max_length=30)
     logo_url = models.URLField(blank=True)
@@ -13,7 +20,6 @@ class Retail(models.Model):
     location_unit = models.PositiveSmallIntegerField()
 
 
-# Create your models here.
 class Promotion(models.Model):
     retail = models.ForeignKey(Retail)
 
@@ -26,8 +32,12 @@ class Promotion(models.Model):
 
 
 class PromotionPriceReduction(Promotion):
-    original_price = models.DecimalField(max_digits=9, decimal_places=2)  # support up to million dollar
-    discount_price = models.DecimalField(max_digits=9, decimal_places=2)  # support up to million dollar
+    # support up to million dollar
+    original_price = models.DecimalField(max_digits=9,
+                                         decimal_places=2)
+    # support up to million dollar
+    discount_price = models.DecimalField(max_digits=9,
+                                         decimal_places=2)
 
 
 class PromotionDiscount(Promotion):
@@ -35,7 +45,9 @@ class PromotionDiscount(Promotion):
 
 
 class PromotionGeneral(Promotion):
-    price = models.DecimalField(max_digits=9, decimal_places=2)  # support up to million dollar
+    # support up to million dollar
+    price = models.DecimalField(max_digits=9,
+                                decimal_places=2)
 
 
 class Consumer(models.Model):
@@ -47,6 +59,16 @@ class Consumer(models.Model):
     # The additional attributes we wish to include.
     website = models.URLField(blank=True)
     picture = models.URLField(blank=True)
+    point = models.PositiveIntegerField()
+
+
+class GrabPromotion(models.Model):
+    customer = models.ForeignKey(Consumer)
+    promotion = models.ForeignKey(Promotion)
+
+    redeem_time = models.DateTimeField(auto_now=True)  # must be > current time
+    is_approved = models.BooleanField()
+    qr_code_url = models.URLField()
     point = models.PositiveIntegerField()
 
 
