@@ -1,4 +1,4 @@
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
 from nwk.forms import UserForm, UserProfileForm
@@ -67,9 +67,11 @@ def register(request):
 
     # Render the template depending on the context.
     return render_to_response(
-            'register.html',
-            {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
-            context)
+        'register.html',
+        {'user_form': user_form,
+         'profile_form': profile_form,
+         'registered': registered},
+        context)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -88,6 +90,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
+class MallViewSet(viewsets.ModelViewSet):
+    queryset = Mall.objects.all()
+    serializer_class = MallSerializer
+
+
 class RetailViewSet(viewsets.ModelViewSet):
     queryset = Retail.objects.all()
     serializer_class = RetailSerializer
@@ -103,19 +110,24 @@ class PromotionPriceReductionViewSet(viewsets.ModelViewSet):
     serializer_class = PromotionPriceReductionSerializer
 
 
-class PromotionDiscountViewSet(viewsets.ModelViewSet):
-    queryset = PromotionDiscount.objects.all()
-    serializer_class = PromotionDiscountSerializer
+class PromotionPriceDiscountViewSet(viewsets.ModelViewSet):
+    queryset = PromotionPriceDiscount.objects.all()
+    serializer_class = PromotionPriceDiscountSerializer
 
 
-class PromotionGeneralViewSet(viewsets.ModelViewSet):
-    queryset = PromotionGeneral.objects.all()
-    serializer_class = PromotionGeneralSerializer
+class PromotionPriceGeneralViewSet(viewsets.ModelViewSet):
+    queryset = PromotionPriceGeneral.objects.all()
+    serializer_class = PromotionPriceGeneralSerializer
 
 
 class ConsumerGeneralViewSet(viewsets.ModelViewSet):
     queryset = Consumer.objects.all()
     serializer_class = ConsumerSerializer
+
+
+class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
+    queryset = GrabPromotion.objects.all()
+    serializer_class = GrabPromotionSerializer
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):

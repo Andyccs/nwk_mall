@@ -15,15 +15,28 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
+class MallSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Mall
+        fields = ('mall_name', 'address', 'region')
+
+
 class RetailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Retail
         fields = ('user',
                   'shop_name',
+                  'mall',
                   'logo_url',
                   'location_level',
                   'location_unit',
                   )
+
+
+class PromotionTypeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = PromotionType
+        fields = ('promotion_type')
 
 
 class PromotionSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,53 +44,58 @@ class PromotionSerializer(serializers.HyperlinkedModelSerializer):
         model = Promotion
         fields = ('retail',
                   'title',
+                  'promotion_type',
                   'description',
                   'quantity',
                   'time_expiry',
                   'image_url',
                   'created_at',
+                  'price',
                   )
 
 
 class PromotionPriceReductionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PromotionPriceReduction
-        fields = ('retail',
-                  'title',
-                  'description',
-                  'quantity',
-                  'time_expiry',
-                  'image_url',
-                  'created_at',
+        fields = (
+                  # 'retail',
+                  # 'title',
+                  # 'description',
+                  # 'quantity',
+                  # 'time_expiry',
+                  # 'image_url',
+                  # 'created_at',
                   'original_price',
                   'discount_price',
                   )
 
 
-class PromotionDiscountSerializer(serializers.HyperlinkedModelSerializer):
+class PromotionPriceDiscountSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PromotionDiscount
-        fields = ('retail',
-                  'title',
-                  'description',
-                  'quantity',
-                  'time_expiry',
-                  'image_url',
-                  'created_at',
+        model = PromotionPriceDiscount
+        fields = (
+                  # 'retail',
+                  # 'title',
+                  # 'description',
+                  # 'quantity',
+                  # 'time_expiry',
+                  # 'image_url',
+                  # 'created_at',
                   'discount',
                   )
 
 
-class PromotionGeneralSerializer(serializers.HyperlinkedModelSerializer):
+class PromotionPriceGeneralSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PromotionGeneral
-        fields = ('retail',
-                  'title',
-                  'description',
-                  'quantity',
-                  'time_expiry',
-                  'image_url',
-                  'created_at',
+        model = PromotionPriceGeneral
+        fields = (
+                  # 'retail',
+                  # 'title',
+                  # 'description',
+                  # 'quantity',
+                  # 'time_expiry',
+                  # 'image_url',
+                  # 'created_at',
                   'price',
                   )
 
@@ -93,14 +111,15 @@ class ConsumerSerializer(serializers.HyperlinkedModelSerializer):
                   'point',
                   )
 
+
 class GrabPromotionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Consumer
-        fields = ('user',
-                  'favorite_shops',
-                  'grabbed',
-                  'website',
-                  'picture',
+        model = GrabPromotion
+        fields = ('consumer',
+                  'promotion',
+                  'redeem_time',
+                  'is_approved',
+                  'qr_code_url',
                   'point',
                   )
 
