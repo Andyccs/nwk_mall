@@ -7,6 +7,7 @@ class Mall(models.Model):
     mall_name = models.CharField(max_length=30)
     address = models.CharField(max_length=60)
     region = models.CharField(max_length=30)
+    redeem_duration = models.PositiveIntegerField()  # in minutes
 
     def __str__(self):
         return "%s" % self.mall_name
@@ -26,49 +27,40 @@ class Retail(models.Model):
         return "%s" % self.shop_name
 
 
-class PromotionType(models.Model):
-    GENERAL = 'GEN'
-    DISCOUNT = 'DIS'
-    REDUCTION = 'RED'
-    PROMOTION_TYPES = (
-        (GENERAL, 'GENERAL'),
-        (DISCOUNT, 'DISCOUNT'),
-        (REDUCTION, 'REDUCTION')
-        )
+# class PromotionType(models.Model):
+#     GENERAL = 'GEN'
+#     DISCOUNT = 'DIS'
+#     REDUCTION = 'RED'
+#     PROMOTION_TYPES = (
+#         (GENERAL, 'GENERAL'),
+#         (DISCOUNT, 'DISCOUNT'),
+#         (REDUCTION, 'REDUCTION')
+#         )
 
-    promotion_type = models.CharField(
-        max_length=3,
-        choices=PROMOTION_TYPES,
-        default=GENERAL,
-        primary_key=True)
+#     promotion_type = models.CharField(
+#         max_length=3,
+#         choices=PROMOTION_TYPES,
+#         default=GENERAL,
+#         primary_key=True)
 
-    def __str__(self):
-        return "%s" % self.promotion_type
-
-
-class PromotionPrice(models.Model):
-    pass
+#     def __str__(self):
+#         return "%s" % self.promotion_type
 
 
 class Promotion(models.Model):
     retail = models.ForeignKey(Retail)
-    promotion_type = models.ForeignKey(PromotionType)
 
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=5000)
-    quantity = models.PositiveSmallIntegerField()  # up to 32767
     time_expiry = models.DateTimeField(auto_now=True)  # must be > current time
     image_url = models.CharField(max_length=300)
     created_at = models.DateTimeField(default=datetime.datetime.now())
-
-    # TODO: add price
-    price = models.OneToOneField(PromotionPrice)
 
     def __str__(self):
         return "%s" % self.title
 
 
-class PromotionPriceReduction(PromotionPrice):
+class PromotionReduction(Promotion):
     # support up to million dollar
     original_price = models.DecimalField(max_digits=9,
                                          decimal_places=2)
@@ -80,14 +72,14 @@ class PromotionPriceReduction(PromotionPrice):
         return "from %d to %d" % (self.original_price, self.discount_price)
 
 
-class PromotionPriceDiscount(PromotionPrice):
+class PromotionDiscount(Promotion):
     discount = models.PositiveSmallIntegerField()
 
     def __str__(self):
         return "%d discount" % self.discount
 
 
-class PromotionPriceGeneral(PromotionPrice):
+class PromotionGeneral(Promotion):
     # support up to million dollar
     price = models.DecimalField(max_digits=9,
                                 decimal_places=2)
@@ -116,7 +108,6 @@ class GrabPromotion(models.Model):
 
     # deadline for the consumer to redeem the promotion
     # past this, the entry will be invalid
-    # the customer must grab again
     redeem_time = models.DateTimeField(auto_now=True)  # must be > current time
 
     is_approved = models.BooleanField(default=False)

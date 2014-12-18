@@ -18,7 +18,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class MallSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Mall
-        fields = ('mall_name', 'address', 'region')
+        fields = ('mall_name', 'address', 'region', 'redeem_duration')
 
 
 class RetailSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,10 +33,27 @@ class RetailSerializer(serializers.HyperlinkedModelSerializer):
                   )
 
 
-class PromotionTypeSerializer(serializers.HyperlinkedModelSerializer):
+# class PromotionTypeSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = PromotionType
+#         fields = ('promotion_type')
+
+
+class ReadPromotionSerializer(serializers.HyperlinkedModelSerializer):
+    original_price = serializers.DecimalField()
+    discount_price = serializers.DecimalField()
+    price = serializers.DecimalField()
+    discount = serializers.IntegerField()
+
     class Meta:
-        model = PromotionType
-        fields = ('promotion_type')
+        model = Promotion
+        fields = ('retail',
+                  'title',
+                  'description',
+                  'time_expiry',
+                  'image_url',
+                  'created_at',
+                  )
 
 
 class PromotionSerializer(serializers.HyperlinkedModelSerializer):
@@ -44,58 +61,49 @@ class PromotionSerializer(serializers.HyperlinkedModelSerializer):
         model = Promotion
         fields = ('retail',
                   'title',
-                  'promotion_type',
                   'description',
-                  'quantity',
                   'time_expiry',
                   'image_url',
                   'created_at',
-                  'price',
                   )
 
 
-class PromotionPriceReductionSerializer(serializers.HyperlinkedModelSerializer):
+class PromotionReductionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PromotionPriceReduction
-        fields = (
-                  # 'retail',
-                  # 'title',
-                  # 'description',
-                  # 'quantity',
-                  # 'time_expiry',
-                  # 'image_url',
-                  # 'created_at',
+        model = PromotionReduction
+        fields = ('retail',
+                  'title',
+                  'description',
+                  'time_expiry',
+                  'image_url',
+                  'created_at',
                   'original_price',
                   'discount_price',
                   )
 
 
-class PromotionPriceDiscountSerializer(serializers.HyperlinkedModelSerializer):
+class PromotionDiscountSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PromotionPriceDiscount
-        fields = (
-                  # 'retail',
-                  # 'title',
-                  # 'description',
-                  # 'quantity',
-                  # 'time_expiry',
-                  # 'image_url',
-                  # 'created_at',
+        model = PromotionDiscount
+        fields = ('retail',
+                  'title',
+                  'description',
+                  'time_expiry',
+                  'image_url',
+                  'created_at',
                   'discount',
                   )
 
 
-class PromotionPriceGeneralSerializer(serializers.HyperlinkedModelSerializer):
+class PromotionGeneralSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PromotionPriceGeneral
-        fields = (
-                  # 'retail',
-                  # 'title',
-                  # 'description',
-                  # 'quantity',
-                  # 'time_expiry',
-                  # 'image_url',
-                  # 'created_at',
+        model = PromotionGeneral
+        fields = ('retail',
+                  'title',
+                  'description',
+                  'time_expiry',
+                  'image_url',
+                  'created_at',
                   'price',
                   )
 

@@ -4,7 +4,24 @@ from django.template import RequestContext
 from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
+from rest_framework.decorators import detail_route
+from rest_framework.response import Response
 from nwk.serializers import *
+import itertools
+
+
+# TODO: add method to get promotion from all 3 tables
+# def get_all_promotions(retail=None):
+#     if retail:
+#         pass
+#     else:
+#         p_discount = PromotionDiscount.objects.all()
+#         p_general = PromotionGeneral.objects.all()
+#     p_discount_serializer = PromotionDiscountSerializer(p_discount)
+#     p_general_serializer = PromotionGeneralSerializer(p_general)
+#     promotions = []
+#     promotions += p_discount_serializer.data
+#     return Response()
 
 
 def index(request):
@@ -99,25 +116,56 @@ class RetailViewSet(viewsets.ModelViewSet):
     queryset = Retail.objects.all()
     serializer_class = RetailSerializer
 
+    @detail_route()
+    def all_promotions(self, request, pk=None):
+        """
+        Returns all promotions for a given retailer
+        """
+        retailer = self.get_object()
+        promotions = Promotion.objects.filter(retail=retailer)
+        serializer = PromotionSerializer(promotions)
+        return Response(serializer.data)
+
+    @detail_route()
+    def active_promotions(self, request, pk=None):
+        """
+        Returns active promotions for a given retailer
+        """
+        pass
+
+
+# class PromotionTypeViewSet(viewsets.ReadOnlyModelViewSet):
+#     queryset = PromotionType.objects.all()
+#     serializer_class = PromotionTypeSerializer
+
 
 class PromotionViewSet(viewsets.ModelViewSet):
     queryset = Promotion.objects.all()
     serializer_class = PromotionSerializer
 
+    def list(self, request):
+        queryset = list(itertools.chain(
+            PromotionGeneral.objects.all(),
+            PromotionDiscount.objects.all(),
+            PromotionReduction.objects.all(),
+            ))
+        serializer = ReadPromotionSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class PromotionPriceReductionViewSet(viewsets.ModelViewSet):
-    queryset = PromotionPriceReduction.objects.all()
-    serializer_class = PromotionPriceReductionSerializer
+
+class PromotionReductionViewSet(viewsets.ModelViewSet):
+    queryset = PromotionReduction.objects.all()
+    serializer_class = PromotionReductionSerializer
 
 
-class PromotionPriceDiscountViewSet(viewsets.ModelViewSet):
-    queryset = PromotionPriceDiscount.objects.all()
-    serializer_class = PromotionPriceDiscountSerializer
+class PromotionDiscountViewSet(viewsets.ModelViewSet):
+    queryset = PromotionDiscount.objects.all()
+    serializer_class = PromotionDiscountSerializer
 
 
-class PromotionPriceGeneralViewSet(viewsets.ModelViewSet):
-    queryset = PromotionPriceGeneral.objects.all()
-    serializer_class = PromotionPriceGeneralSerializer
+class PromotionGeneralViewSet(viewsets.ModelViewSet):
+    queryset = PromotionGeneral.objects.all()
+    serializer_class = PromotionGeneralSerializer
 
 
 class ConsumerGeneralViewSet(viewsets.ModelViewSet):
