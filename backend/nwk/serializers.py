@@ -33,27 +33,28 @@ class RetailSerializer(serializers.HyperlinkedModelSerializer):
                   )
 
 
-# class PromotionTypeSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = PromotionType
-#         fields = ('promotion_type')
+class PromotionTypeSerializer(serializers.Serializer):
+    promotion_type = serializers.CharField()
 
 
-class ReadPromotionSerializer(serializers.HyperlinkedModelSerializer):
-    original_price = serializers.DecimalField()
-    discount_price = serializers.DecimalField()
-    price = serializers.DecimalField()
-    discount = serializers.IntegerField()
-
-    class Meta:
-        model = Promotion
-        fields = ('retail',
-                  'title',
-                  'description',
-                  'time_expiry',
-                  'image_url',
-                  'created_at',
-                  )
+class ReadPromotionSerializer(serializers.Serializer):
+    def to_native(self, value):
+        if isinstance(value, PromotionDiscount):
+            a_s = PromotionDiscountSerializer(
+                instance=value,
+                context=self.context)
+            return a_s.data
+        if isinstance(value, PromotionReduction):
+            b_s = PromotionReductionSerializer(
+                instance=value,
+                context=self.context)
+            return b_s.data
+        if isinstance(value, PromotionGeneral):
+            c_s = PromotionGeneralSerializer(
+                instance=value,
+                context=self.context)
+            return c_s.data
+        raise NotImplementedError
 
 
 class PromotionSerializer(serializers.HyperlinkedModelSerializer):

@@ -149,7 +149,10 @@ class PromotionViewSet(viewsets.ModelViewSet):
             PromotionDiscount.objects.all(),
             PromotionReduction.objects.all(),
             ))
-        serializer = ReadPromotionSerializer(queryset, many=True)
+        serializer = ReadPromotionSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
         return Response(serializer.data)
 
 
