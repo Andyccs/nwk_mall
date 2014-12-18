@@ -14,9 +14,9 @@ PostgreSQL
 ==========
 Development database name: nwk
 
-Development username: postgres
+Development database username: postgres
 
-Development password: root
+Development database password: root
 
 Development port: 5432
 

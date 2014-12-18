@@ -1,5 +1,5 @@
 """
-Django settings for mysite project.
+Django settings for django_project project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(@78&og=96zd0)rl3$d-rl!a5yhi*ci2t6(xaa%-yf=pjzni_-'
+SECRET_KEY = 'EqQoALfjxKPUKhahYZ2U6L055hHfEfx0fHFxlrsvEHLWge9UEn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -50,9 +50,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'django_project.urls'
 
-WSGI_APPLICATION = 'mysite.wsgi.application'
+WSGI_APPLICATION = 'django_project.wsgi.application'
 
 
 # Database
@@ -88,6 +88,18 @@ DATABASES = {
         'PORT': '8889',
     }
 }
+
+# DigitalOcean postgreSQL database setting
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'django',
+#         'USER': 'django',
+#         'PASSWORD': 'HUEDSYjjLZ',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
