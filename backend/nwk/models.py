@@ -131,7 +131,7 @@ class GrabPromotion(models.Model):
     # past this, the entry will be invalid
     redeem_time = models.DateTimeField(editable=False)
 
-    is_approved = models.BooleanField(default=False)
+    is_approved = models.NullBooleanField(blank=True)
     qr_code_url = models.URLField()
     point = models.PositiveIntegerField()
 
