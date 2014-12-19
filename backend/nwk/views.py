@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.utils import timezone
+from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
@@ -215,11 +216,25 @@ class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
     queryset = GrabPromotion.objects.all()
     serializer_class = GrabPromotionSerializer
 
+    def get_object(self, pk):
+        try:
+            grab_promotion = GrabPromotion.objects.get(pk=pk)
+            return grab_promotion
+        except GrabPromotion.DoesNotExist:
+            raise Http404
+
     def update(self, request, pk=None):
-        grab_promotion = self.get_object
+        try:
+            grab_promotion = self.get_object(pk=pk)
+        except Http404:
+            return Response(
+                "Entry does not exist",
+                status=status.HTTP_404_NOT_FOUND)
 
         # check whether promotion has expired
-        now = datetime.datetime.now()
+        now = timezone.make_aware(
+            datetime.datetime.now(),
+            timezone.get_default_timezone())
         # TODO: add checking so only do this when is_approved is going
         #       to be set to True ?
         if grab_promotion.redeem_time > now:

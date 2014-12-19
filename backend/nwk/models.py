@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 import datetime
 from django.contrib.auth.models import User
 
@@ -74,7 +75,9 @@ class Promotion(models.Model):
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
         if not self.id:
-            self.created_at = datetime.datetime.now()
+            self.created_at = timezone.make_aware(
+                datetime.datetime.now(),
+                timezone.get_default_timezone())
         return super(Promotion, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -142,7 +145,9 @@ class GrabPromotion(models.Model):
         if not self.id:
             now = datetime.datetime.now()
             duration = datetime.timedelta(minutes=redeem_duration)
-            self.redeem_time = now + duration
+            self.redeem_time = timezone.make_aware(
+                now + duration,
+                timezone.get_default_timezone())
         return super(GrabPromotion, self).save(*args, **kwargs)
 
     def __str__(self):
