@@ -62,6 +62,7 @@ class PromotionSerializer(serializers.HyperlinkedModelSerializer):
         model = Promotion
         fields = ('retail',
                   'title',
+                  'category',
                   'description',
                   'time_expiry',
                   'image_url',
@@ -74,6 +75,7 @@ class PromotionReductionSerializer(serializers.HyperlinkedModelSerializer):
         model = PromotionReduction
         fields = ('retail',
                   'title',
+                  'category',
                   'description',
                   'time_expiry',
                   'image_url',
@@ -88,6 +90,7 @@ class PromotionDiscountSerializer(serializers.HyperlinkedModelSerializer):
         model = PromotionDiscount
         fields = ('retail',
                   'title',
+                  'category',
                   'description',
                   'time_expiry',
                   'image_url',
@@ -101,6 +104,7 @@ class PromotionGeneralSerializer(serializers.HyperlinkedModelSerializer):
         model = PromotionGeneral
         fields = ('retail',
                   'title',
+                  'category',
                   'description',
                   'time_expiry',
                   'image_url',

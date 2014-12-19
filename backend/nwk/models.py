@@ -48,10 +48,25 @@ class Retail(models.Model):
 
 
 class Promotion(models.Model):
+    CAT_FOOD = 'FOOD'
+    CAT_FASHION = 'FASHION'
+    CAT_LIFESTYLE = 'LIFESTYLE'
+    CAT_OTHER = 'OTHER'
+    PROMOTION_CATEGORIES = (
+        (CAT_FOOD, 'Food'),
+        (CAT_FASHION, 'Fashion'),
+        (CAT_LIFESTYLE, 'Lifestyle'),
+        (CAT_OTHER, 'Other'),
+        )
+
     retail = models.ForeignKey(Retail)
 
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=5000)
+    category = models.CharField(
+        max_length=20,
+        choices=PROMOTION_CATEGORIES,
+        default=CAT_OTHER)
     time_expiry = models.DateTimeField(auto_now=True)  # must be > current time
     image_url = models.CharField(max_length=300)
     created_at = models.DateTimeField(default=datetime.datetime.now())
