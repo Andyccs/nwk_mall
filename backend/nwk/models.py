@@ -53,10 +53,10 @@ class Promotion(models.Model):
     CAT_LIFESTYLE = 'LIFESTYLE'
     CAT_OTHER = 'OTHER'
     PROMOTION_CATEGORIES = (
-        (CAT_FOOD, 'Food'),
-        (CAT_FASHION, 'Fashion'),
-        (CAT_LIFESTYLE, 'Lifestyle'),
-        (CAT_OTHER, 'Other'),
+        (CAT_FOOD, 'FOOD'),
+        (CAT_FASHION, 'FASHION'),
+        (CAT_LIFESTYLE, 'LIFESTYLE'),
+        (CAT_OTHER, 'OTHER'),
         )
 
     retail = models.ForeignKey(Retail)
