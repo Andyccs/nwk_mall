@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from nwk.serializers import *
@@ -214,6 +214,28 @@ class ConsumerGeneralViewSet(viewsets.ModelViewSet):
 class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
     queryset = GrabPromotion.objects.all()
     serializer_class = GrabPromotionSerializer
+
+    def update(self, request, pk=None):
+        grab_promotion = self.get_object
+
+        # check whether promotion has expired
+        now = datetime.datetime.now()
+        # TODO: add checking so only do this when is_approved is going
+        #       to be set to True ?
+        if grab_promotion.redeem_time > now:
+            return Response(
+                "Grab Promotion has Expired",
+                status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        # serialize data
+        serializer = GrabPromotionSerializer(data=request.DATA)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        pass
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):
