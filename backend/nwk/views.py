@@ -162,6 +162,19 @@ class PromotionViewSet(viewsets.ModelViewSet):
             context={'request': request})
         return Response(serializer.data)
 
+    @detail_route()
+    def grab_list(self, request, pk=None):
+        """
+        Returns list of grab promotion entries for a given promotion
+        """
+        promotion = self.get_object()
+        queryset = GrabPromotion.objects.filter(promotion=promotion)
+        serializer = GrabPromotionSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
+
 
 class PromotionReductionViewSet(viewsets.ModelViewSet):
     queryset = PromotionReduction.objects.all()
@@ -181,6 +194,21 @@ class PromotionGeneralViewSet(viewsets.ModelViewSet):
 class ConsumerGeneralViewSet(viewsets.ModelViewSet):
     queryset = Consumer.objects.all()
     serializer_class = ConsumerSerializer
+
+    @detail_route()
+    def grab_history(self, request, pk=None):
+        """
+        Returns list of grab promotion entries for a given user
+        """
+        consumer = self.get_object()
+        queryset = GrabPromotion.objects.filter(
+            consumer=consumer,
+            is_approved=True)
+        serializer = GrabPromotionSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
 
 
 class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
