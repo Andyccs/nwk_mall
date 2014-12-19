@@ -5,12 +5,14 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
+router.register(r'mall', views.MallViewSet)
 router.register(r'retails', views.RetailViewSet)
 router.register(r'promotions', views.PromotionViewSet)
 router.register(r'p_reductions', views.PromotionReductionViewSet)
 router.register(r'p_discounts', views.PromotionDiscountViewSet)
 router.register(r'p_generals', views.PromotionGeneralViewSet)
 router.register(r'consumers', views.ConsumerGeneralViewSet)
+router.register(r'grab_promotions', views.GrabPromotionsGeneralViewSet)
 router.register(r'applications', views.ApplicationViewSet)
 
 urlpatterns = patterns(

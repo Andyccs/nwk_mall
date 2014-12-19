@@ -122,8 +122,15 @@ class RetailViewSet(viewsets.ModelViewSet):
         Returns all promotions for a given retailer
         """
         retailer = self.get_object()
-        promotions = Promotion.objects.filter(retail=retailer)
-        serializer = PromotionSerializer(promotions)
+        queryset = list(itertools.chain(
+            PromotionGeneral.objects.filter(retail=retailer),
+            PromotionDiscount.objects.filter(retail=retailer),
+            PromotionReduction.objects.filter(retail=retailer),
+            ))
+        serializer = ReadPromotionSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
         return Response(serializer.data)
 
     @detail_route()

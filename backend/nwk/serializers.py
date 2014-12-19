@@ -118,7 +118,6 @@ class ConsumerSerializer(serializers.HyperlinkedModelSerializer):
         model = Consumer
         fields = ('user',
                   'favorite_shops',
-                  'grabbed',
                   'website',
                   'picture',
                   'point',

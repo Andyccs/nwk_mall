@@ -69,7 +69,13 @@ class Promotion(models.Model):
         default=CAT_OTHER)
     time_expiry = models.DateTimeField(auto_now=True)  # must be > current time
     image_url = models.CharField(max_length=300)
-    created_at = models.DateTimeField(default=datetime.datetime.now())
+    created_at = models.DateTimeField(editable=False)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created_at = datetime.datetime.now()
+        return super(Promotion, self).save(*args, **kwargs)
 
     def __str__(self):
         return "%s" % self.title
@@ -123,11 +129,21 @@ class GrabPromotion(models.Model):
 
     # deadline for the consumer to redeem the promotion
     # past this, the entry will be invalid
-    redeem_time = models.DateTimeField(auto_now=True)  # must be > current time
+    redeem_time = models.DateTimeField(editable=False)
 
     is_approved = models.BooleanField(default=False)
     qr_code_url = models.URLField()
     point = models.PositiveIntegerField()
+
+    def save(self, *args, **kwargs):
+        ''' On save, update redeem time '''
+        mall = self.promotion.retail.mall
+        redeem_duration = mall.redeem_duration
+        if not self.id:
+            now = datetime.datetime.now()
+            duration = datetime.timedelta(minutes=redeem_duration)
+            self.redeem_time = now + duration
+        return super(GrabPromotion, self).save(*args, **kwargs)
 
     def __str__(self):
         return "%s by %s" % (self.promotion, self.customer)
