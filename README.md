@@ -24,7 +24,7 @@ cd ./backend
 python manage.py migrate
 
 #Finally, run the server
-python manage.py runserver
+python manage.py runserver 0.0.0.0:8000
 ```
 
 Note: Docker will be supported in near future
