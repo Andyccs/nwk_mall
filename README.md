@@ -7,22 +7,34 @@ Installation
 First, you must have a mysql server running. 
 
 Change root password to root:
-	mysqladmin -u root password root
+```
+mysqladmin -u root password root
+```
 
 To run mysql server:
-	mysqld
+```
+mysqld
+```
 
 Then, create a new database:
-	mysql -uroot -p root -e "CREATE DATABASE IF NOT EXISTS shopgrab_db;"
+```
+mysql -uroot -p root -e "CREATE DATABASE IF NOT EXISTS shopgrab_db;"
+```
 
 Use pip to install all dependencies
-	pip install -r requirements.txt
+```
+pip install -r requirements.txt
+```
 
 Migrate django database
-	cd ./backend
-	python manage.py migrate
+```
+cd ./backend
+python manage.py migrate
+```
 
 Finally, run the server
-	python manage.py runserver
+```
+python manage.py runserver
+```
 
 Note: Docker will be supported in near future
