@@ -7,10 +7,7 @@ class Command(BaseCommand):
 	def add_retail(self,
 		username,password,email,shop_name,
 		location_level,location_unit,logo_url):
-		retail = User(
-			username=username,
-			password=password,
-			email=email)
+		retail = User.objects.create_user(username,email,password)
 		retail.save()
 		retail.groups.add(self.retail_group)
 
@@ -25,10 +22,7 @@ class Command(BaseCommand):
 
 	def add_consumers(self,
 		username,password,email):
-		consumer = User(
-			username=username,
-			password=password,
-			email=email)
+		consumer = User.objects.create_user(username,email,password)
 		consumer.save()
 		consumer.groups.add(self.consumer_group)
 
