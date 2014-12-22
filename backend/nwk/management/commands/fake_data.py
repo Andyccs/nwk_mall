@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User,Group
-from nwk.models import Retail,Mall
+from nwk.models import Retail,Mall,Consumer
 from django.conf import settings
 
 class Command(BaseCommand):
@@ -23,6 +23,22 @@ class Command(BaseCommand):
 			logo_url=logo_url)
 		real_retail.save()
 
+	def add_consumers(self,
+		username,password,email):
+		consumer = User(
+			username=username,
+			password=password,
+			email=email)
+		consumer.save()
+		consumer.groups.add(self.consumer_group)
+
+		real_customer = Consumer(
+			user=consumer,
+			website="",
+			picture="http://twimgs.com/informationweek/galleries/automated/879/01_Steve-Jobs_full.jpg",
+			point=0)
+		real_customer.save()
+
 	def handle(self, **options):
 
 		# Initialize Retail
@@ -37,6 +53,10 @@ class Command(BaseCommand):
 			{"retail":"Nike","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-d7218c67-06a9-46b9-b15d-ad288a60726d-nike-logo-black.jpg"},
 			{"retail":"Starbuck","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-f08bb1a6-90c9-4607-a971-9fcb167b23e6-starbuck_logo.png"}
 			]
+		consumer_list = [
+			{"username":"andyccs"},
+			{"username":"dillon"}
+		]
 
 		self.mall = Mall(
 			mall_name="jurong point",
@@ -48,7 +68,14 @@ class Command(BaseCommand):
 		self.retail_group = Group(name="retail")
 		self.retail_group.save()
 
+		self.consumer_group = Group(name="consumer")
+		self.consumer_group.save()
+
 		for retail in retail_list:
 			name = retail["retail"]
 			logo = retail["logo_url"]
 			self.add_retail(name,name,name+"@gmail.com",name,1,201,logo)
+
+		for consumer in consumer_list:
+			name = consumer['username']
+			self.add_consumers(name,name,name+"@gmail")
