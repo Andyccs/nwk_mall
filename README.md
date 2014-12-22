@@ -4,20 +4,25 @@ Shopping mall application back end
 
 Installation
 ===========
-[Django Rest Framework](http://www.django-rest-framework.org/)
+First, you must have a mysql server running. 
 
-[PostgreSQL 9.3.5.1](http://www.enterprisedb.com/products-services-training/pgdownload#windows)
+Change root password to root:
+	mysqladmin -u root password root
 
-[Psycopg driver](http://initd.org/psycopg/)
+To run mysql server:
+	mysqld
 
-PostgreSQL
-==========
-Development database name: nwk
+Then, create a new database:
+	mysql -uroot -p root -e "CREATE DATABASE IF NOT EXISTS shopgrab_db;"
 
-Development database username: postgres
+Use pip to install all dependencies
+	pip install -r requirements.txt
 
-Development database password: root
+Migrate django database
+	cd ./backend
+	python manage.py migrate
 
-Development port: 5432
+Finally, run the server
+	python manage.py runserver
 
-For development purpose, you may install [phpPgAdmin](http://phppgadmin.sourceforge.net/doku.php?id=start). 
+Note: Docker will be supported in near future
