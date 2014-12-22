@@ -4,37 +4,39 @@ Shopping mall application back end
 
 Installation
 ===========
-First, you must have a mysql server running. 
+First, you must install mysql server 
 
-Change root password to root:
 ```
+# Change root password to root:
 mysqladmin -u root password root
-```
 
-To run mysql server:
-```
+#To run mysql server:
 mysqld
-```
 
-Then, create a new database:
-```
+#Then, create a new database:
 mysql -uroot -p root -e "CREATE DATABASE IF NOT EXISTS shopgrab_db;"
-```
 
-Use pip to install all dependencies
-```
+#Use pip to install all dependencies
 pip install -r requirements.txt
-```
 
-Migrate django database
-```
+#Migrate django database
 cd ./backend
 python manage.py migrate
-```
 
-Finally, run the server
-```
+#Finally, run the server
 python manage.py runserver
 ```
 
 Note: Docker will be supported in near future
+
+Fake Data
+=========
+To insert fake data to the database
+```
+python manage.py fake_data
+```
+
+If you want to remove all data in the database
+```
+python manage.py flush
+```

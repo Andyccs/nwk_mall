@@ -4,7 +4,9 @@ from nwk.models import Retail,Mall
 from django.conf import settings
 
 class Command(BaseCommand):
-	def add_retail(self,username,password,email,shop_name,location_level,location_unit):
+	def add_retail(self,
+		username,password,email,shop_name,
+		location_level,location_unit,logo_url):
 		retail = User(
 			username=username,
 			password=password,
@@ -17,16 +19,24 @@ class Command(BaseCommand):
 			shop_name=shop_name,
 			mall=self.mall,
 			location_level=location_level,
-			location_unit=location_unit)
+			location_unit=location_unit,
+			logo_url=logo_url)
 		real_retail.save()
 
 	def handle(self, **options):
 
 		# Initialize Retail
 		retail_list = [
-			"Challenger","Channel","Mr.Bean",
-			"G2000","Pizza Hut","McDonald's",
-			"Subway","Nike","Starbuck"]
+			{"retail":"Challenger","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-a165def6-f908-43b6-83e8-43264eeb6b4c-challenger.jpg"},
+			{"retail":"Channel","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-756a4b0a-7b28-450a-8e38-006fed78ab1f-chanel_logo.gif"},
+			{"retail":"Mr.Bean","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-75d1908f-f11d-4ed9-9fa5-089671267c21-1344595157_6.jpg"},
+			{"retail":"G2000","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-6f3964d6-ceb5-44d2-beca-c34d4c54389e-g2000.gif"},
+			{"retail":"Pizza Hut","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-42718607-4611-40ef-8214-de0354310d88-brand.gif"},
+			{"retail":"McDonald's","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-b2aeae9e-0125-4bb1-b35c-541cae843691-6ERHbJBN.jpeg"},
+			{"retail":"Subway","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-b37c62a8-3390-4037-827d-e7c07ac10019-Subway-Logo.jpg"},
+			{"retail":"Nike","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-d7218c67-06a9-46b9-b15d-ad288a60726d-nike-logo-black.jpg"},
+			{"retail":"Starbuck","logo_url":"http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-f08bb1a6-90c9-4607-a971-9fcb167b23e6-starbuck_logo.png"}
+			]
 
 		self.mall = Mall(
 			mall_name="jurong point",
@@ -39,4 +49,6 @@ class Command(BaseCommand):
 		self.retail_group.save()
 
 		for retail in retail_list:
-			self.add_retail(retail,retail,retail+"@gmail.com",retail,1,201)
+			name = retail["retail"]
+			logo = retail["logo_url"]
+			self.add_retail(name,name,name+"@gmail.com",name,1,201,logo)
