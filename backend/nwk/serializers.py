@@ -25,6 +25,7 @@ class RetailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Retail
         fields = ('user',
+                  'id',
                   'shop_name',
                   'mall',
                   'logo_url',
