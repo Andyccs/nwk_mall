@@ -77,7 +77,7 @@ class Promotion(models.Model):
 
     def save(self, *args, **kwargs):
         ''' On creation, update timestamps '''
-        if not self.id:
+        if self.pk is None:
             self.created_at = timezone.make_aware(
                 datetime.datetime.now(),
                 timezone.get_default_timezone())
@@ -130,6 +130,10 @@ class Consumer(models.Model):
 
 
 class GrabPromotion(models.Model):
+    class Meta:
+        # does not allow multiple promotion grabbing
+        unique_together = ['consumer', 'promotion']
+
     consumer = models.ForeignKey(Consumer)
     promotion = models.ForeignKey(Promotion)
 
@@ -151,9 +155,10 @@ class GrabPromotion(models.Model):
         - set point
         - get QR code url
         '''
-        mall = self.promotion.retail.mall
-        redeem_duration = mall.redeem_duration
-        if not self.id:
+        if self.pk is None:
+            mall = self.promotion.retail.mall
+            redeem_duration = mall.redeem_duration
+
             # set time
             now = datetime.datetime.now()
             duration = datetime.timedelta(minutes=redeem_duration)
@@ -161,7 +166,7 @@ class GrabPromotion(models.Model):
                 now + duration,
                 timezone.get_default_timezone())
 
-            # TODO: get QR code
+            # TODO: set QR code
 
             # set point
             self.point = POINT_DEFAULT

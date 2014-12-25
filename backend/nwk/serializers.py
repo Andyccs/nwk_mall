@@ -128,7 +128,8 @@ class ConsumerSerializer(serializers.HyperlinkedModelSerializer):
 class GrabPromotionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GrabPromotion
-        fields = ('consumer',
+        fields = ('id',
+                  'consumer',
                   'promotion',
                   'redeem_time',
                   'is_approved',

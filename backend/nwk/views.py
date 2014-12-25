@@ -216,7 +216,7 @@ class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
     queryset = GrabPromotion.objects.all()
     serializer_class = GrabPromotionSerializer
 
-    def get_object(self, pk):
+    def get_grab_promotion(self, pk):
         try:
             grab_promotion = GrabPromotion.objects.get(pk=pk)
             return grab_promotion
@@ -225,7 +225,7 @@ class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         try:
-            grab_promotion = self.get_object(pk=pk)
+            grab_promotion = self.get_grab_promotion(pk=pk)
         except Http404:
             return Response(
                 "Entry does not exist",
@@ -235,17 +235,22 @@ class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
         now = timezone.make_aware(
             datetime.datetime.now(),
             timezone.get_default_timezone())
-        # TODO: add checking so only do this when is_approved is going
-        #       to be set to True ?
-        if grab_promotion.redeem_time > now:
+
+        # disable update once promotion expired
+        duration_passed = now > grab_promotion.redeem_time
+        if duration_passed:
             return Response(
                 "Grab Promotion has Expired",
                 status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # serialize data
-        serializer = GrabPromotionSerializer(data=request.DATA)
+        serializer = self.get_serializer(
+            grab_promotion,
+            data=request.DATA,
+            )
         if serializer.is_valid():
-            serializer.save()
+            self.pre_save(serializer.object)
+            self.object = serializer.save()
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
