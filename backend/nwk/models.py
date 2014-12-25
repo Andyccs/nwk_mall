@@ -4,6 +4,9 @@ import datetime
 from django.contrib.auth.models import User
 
 
+POINT_DEFAULT = 100
+
+
 class Mall(models.Model):
     mall_name = models.CharField(max_length=30)
     address = models.CharField(max_length=60)
@@ -73,7 +76,7 @@ class Promotion(models.Model):
     created_at = models.DateTimeField(editable=False)
 
     def save(self, *args, **kwargs):
-        ''' On save, update timestamps '''
+        ''' On creation, update timestamps '''
         if not self.id:
             self.created_at = timezone.make_aware(
                 datetime.datetime.now(),
@@ -134,20 +137,35 @@ class GrabPromotion(models.Model):
     # past this, the entry will be invalid
     redeem_time = models.DateTimeField(editable=False)
 
-    is_approved = models.NullBooleanField(blank=True)
-    qr_code_url = models.URLField()
-    point = models.PositiveIntegerField()
+    is_approved = models.NullBooleanField(blank=True, null=True)
+
+    qr_code_url = models.URLField(blank=True)
+
+    point = models.PositiveIntegerField(
+        blank=True, default=POINT_DEFAULT, editable=False)
 
     def save(self, *args, **kwargs):
-        ''' On save, update redeem time '''
+        '''
+        On creation:
+        - set redeem time
+        - set point
+        - get QR code url
+        '''
         mall = self.promotion.retail.mall
         redeem_duration = mall.redeem_duration
         if not self.id:
+            # set time
             now = datetime.datetime.now()
             duration = datetime.timedelta(minutes=redeem_duration)
             self.redeem_time = timezone.make_aware(
                 now + duration,
                 timezone.get_default_timezone())
+
+            # TODO: get QR code
+
+            # set point
+            self.point = POINT_DEFAULT
+
         return super(GrabPromotion, self).save(*args, **kwargs)
 
     def __str__(self):
