@@ -247,15 +247,12 @@ class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(
             grab_promotion,
             data=request.DATA,
-            )
+            context={'request': request})
         if serializer.is_valid():
             self.pre_save(serializer.object)
             self.object = serializer.save()
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def partial_update(self, request, pk=None):
-        pass
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):
