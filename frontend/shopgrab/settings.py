@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
+# Build paths inside the project like this: BASE_DIR / "directory"
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates'), ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -26,6 +28,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SERVER_BASE_URL = 'http://127.0.0.1:8000/nwk/'
+SLUMBER_DIRECTORY = 'http://127.0.0.1:8000/nwk/'
 
 # Application definition
 
@@ -36,6 +40,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap3',
+    'retail',
+    'crispy_forms',
 )
 
 MIDDLEWARE_CLASSES = (
