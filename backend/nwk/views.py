@@ -5,7 +5,7 @@ from django.template import RequestContext
 from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, status
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from nwk.serializers import *
 import itertools
@@ -117,6 +117,18 @@ class RetailViewSet(viewsets.ModelViewSet):
     queryset = Retail.objects.all()
     serializer_class = RetailSerializer
 
+    def list(self, request):
+        category = self.request.QUERY_PARAMS.get('category', None)
+        if category is not None:
+            queryset = Retail.objects.filter(category=category)
+        else:
+            queryset = Retail.objects.all()
+        serializer = RetailSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
+
     @detail_route()
     def all_promotions(self, request, pk=None):
         """
@@ -139,7 +151,29 @@ class RetailViewSet(viewsets.ModelViewSet):
         """
         Returns active promotions for a given retailer
         """
-        pass
+        retailer = self.get_object()
+
+        # check whether promotion has expired
+        now = timezone.make_aware(
+            datetime.datetime.now(),
+            timezone.get_default_timezone())
+
+        queryset = list(itertools.chain(
+            PromotionGeneral.objects.filter(
+                retail=retailer,
+                time_expiry__gt=now),
+            PromotionDiscount.objects.filter(
+                retail=retailer,
+                time_expiry__gt=now),
+            PromotionReduction.objects.filter(
+                retail=retailer,
+                time_expiry__gt=now),
+            ))
+        serializer = ReadPromotionSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
 
 
 # class PromotionTypeViewSet(viewsets.ReadOnlyModelViewSet):
@@ -231,12 +265,12 @@ class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
                 "Entry does not exist",
                 status=status.HTTP_404_NOT_FOUND)
 
-        # check whether promotion has expired
+        # check whether grab promotion has expired
         now = timezone.make_aware(
             datetime.datetime.now(),
             timezone.get_default_timezone())
 
-        # disable update once promotion expired
+        # disable update once grab promotion expired
         duration_passed = now > grab_promotion.redeem_time
         if duration_passed:
             return Response(

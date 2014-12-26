@@ -18,12 +18,27 @@ class Mall(models.Model):
 
 
 class Retail(models.Model):
+    CAT_FOOD = 'FOOD'
+    CAT_FASHION = 'FASHION'
+    CAT_LIFESTYLE = 'LIFESTYLE'
+    CAT_OTHER = 'OTHER'
+    PROMOTION_CATEGORIES = (
+        (CAT_FOOD, 'FOOD'),
+        (CAT_FASHION, 'FASHION'),
+        (CAT_LIFESTYLE, 'LIFESTYLE'),
+        (CAT_OTHER, 'OTHER'),
+        )
+
     # This line is required. Links UserProfile to a User model instance.
     user = models.OneToOneField(User)
     mall = models.ForeignKey(Mall)
 
     shop_name = models.CharField(max_length=30)
     logo_url = models.URLField(blank=True)
+    category = models.CharField(
+        max_length=20,
+        choices=PROMOTION_CATEGORIES,
+        default=CAT_OTHER)
     location_level = models.PositiveSmallIntegerField()
     location_unit = models.PositiveSmallIntegerField()
 
@@ -52,25 +67,10 @@ class Retail(models.Model):
 
 
 class Promotion(models.Model):
-    CAT_FOOD = 'FOOD'
-    CAT_FASHION = 'FASHION'
-    CAT_LIFESTYLE = 'LIFESTYLE'
-    CAT_OTHER = 'OTHER'
-    PROMOTION_CATEGORIES = (
-        (CAT_FOOD, 'FOOD'),
-        (CAT_FASHION, 'FASHION'),
-        (CAT_LIFESTYLE, 'LIFESTYLE'),
-        (CAT_OTHER, 'OTHER'),
-        )
-
     retail = models.ForeignKey(Retail)
 
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=5000)
-    category = models.CharField(
-        max_length=20,
-        choices=PROMOTION_CATEGORIES,
-        default=CAT_OTHER)
     time_expiry = models.DateTimeField(auto_now=True)  # must be > current time
     image_url = models.CharField(max_length=300)
     created_at = models.DateTimeField(editable=False)
