@@ -128,6 +128,12 @@ class Consumer(models.Model):
     def __str__(self):
         return "%s" % self.user
 
+BOOLEAN_CHOICES = (
+    (None, 'Waiting'),
+    (True, 'Yes'),
+    (False, 'No')
+)
+
 
 class GrabPromotion(models.Model):
     class Meta:
@@ -141,12 +147,19 @@ class GrabPromotion(models.Model):
     # past this, the entry will be invalid
     redeem_time = models.DateTimeField(editable=False)
 
-    is_approved = models.NullBooleanField(blank=True, null=True)
+    is_approved = models.NullBooleanField(
+        blank=True,
+        null=True,
+        choices=BOOLEAN_CHOICES)
 
     qr_code_url = models.URLField(blank=True)
 
     point = models.PositiveIntegerField(
         blank=True, default=POINT_DEFAULT, editable=False)
+
+    def __init__(self, *args, **kwargs):
+        super(GrabPromotion, self).__init__(*args, **kwargs)
+        self.__original_is_approved = self.is_approved
 
     def save(self, *args, **kwargs):
         '''

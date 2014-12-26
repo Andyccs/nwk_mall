@@ -302,18 +302,19 @@ class GrabPromotionsViewSet(viewsets.ModelViewSet):
             datetime.datetime.now(),
             timezone.get_default_timezone())
 
-        # disable update once grab promotion expired
+        # disable update once:
+        # - grab promotion expired, or
+        # - approval status has been set
         duration_passed = now > grab_promotion.redeem_time
-        if duration_passed:
+        if duration_passed or grab_promotion.is_approved is not None:
             return Response(
-                "Grab Promotion has Expired",
+                "Entry can no longer be modified.",
                 status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # serialize data
         serializer = self.get_serializer(
             grab_promotion,
-            data=request.DATA,
-            context={'request': request})
+            data=request.DATA,)
         if serializer.is_valid():
             self.pre_save(serializer.object)
             self.object = serializer.save()
