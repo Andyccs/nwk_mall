@@ -250,6 +250,19 @@ class ConsumerViewSet(viewsets.ModelViewSet):
     serializer_class = ConsumerSerializer
 
     @detail_route()
+    def favorite_shops(self, request, pk=None):
+        """
+        Returns list of favorite retail entries for a given user
+        """
+        consumer = self.get_object()
+        queryset = consumer.favorite_shops.all()
+        serializer = RetailSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
+
+    @detail_route()
     def grab_history(self, request, pk=None):
         """
         Returns list of grab promotion entries for a given user
