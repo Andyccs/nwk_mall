@@ -129,6 +129,25 @@ class RetailViewSet(viewsets.ModelViewSet):
             context={'request': request})
         return Response(serializer.data)
 
+    @list_route()
+    def with_promotion(self,request):
+        category = self.request.QUERY_PARAMS.get('category', None)
+        # TODO: get number of promotions of each retail from cache
+        # if category is not None:
+        #     queryset = Retail.objects.filter(
+
+        #         category=category)
+        # else:
+        #     queryset = Retail.objects.filter(
+
+        #         )
+        # serializer = RetailSerializer(
+        #     queryset,
+        #     many=True,
+        #     context={'request': request})
+        # return Response(serializer.data)
+        pass
+
     @detail_route()
     def all_promotions(self, request, pk=None):
         """
@@ -226,7 +245,7 @@ class PromotionGeneralViewSet(viewsets.ModelViewSet):
     serializer_class = PromotionGeneralSerializer
 
 
-class ConsumerGeneralViewSet(viewsets.ModelViewSet):
+class ConsumerViewSet(viewsets.ModelViewSet):
     queryset = Consumer.objects.all()
     serializer_class = ConsumerSerializer
 
@@ -246,7 +265,7 @@ class ConsumerGeneralViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class GrabPromotionsGeneralViewSet(viewsets.ModelViewSet):
+class GrabPromotionsViewSet(viewsets.ModelViewSet):
     queryset = GrabPromotion.objects.all()
     serializer_class = GrabPromotionSerializer
 
