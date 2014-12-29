@@ -68,6 +68,7 @@ class PromotionSerializer(serializers.HyperlinkedModelSerializer):
                   'time_expiry',
                   'image_url',
                   'created_at',
+                  'id',
                   )
 
 
@@ -82,6 +83,7 @@ class PromotionReductionSerializer(serializers.HyperlinkedModelSerializer):
                   'created_at',
                   'original_price',
                   'discount_price',
+                  'id',
                   )
 
 
@@ -95,6 +97,7 @@ class PromotionDiscountSerializer(serializers.HyperlinkedModelSerializer):
                   'image_url',
                   'created_at',
                   'discount',
+                  'id',
                   )
 
 
@@ -108,6 +111,7 @@ class PromotionGeneralSerializer(serializers.HyperlinkedModelSerializer):
                   'image_url',
                   'created_at',
                   'price',
+                  'id',
                   )
 
 
