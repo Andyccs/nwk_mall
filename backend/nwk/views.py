@@ -224,6 +224,23 @@ class ConsumerViewSet(viewsets.ModelViewSet):
     serializer_class = ConsumerSerializer
     permission_classes = [IsAuthenticated, ]
 
+    def list(self, request):
+        username = self.request.QUERY_PARAMS.get('username', None)
+        if username is not None:
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return Response(
+                    "User does not exist", status=status.HTTP_404_NOT_FOUND)
+            queryset = Consumer.objects.filter(user=user)
+        else:
+            queryset = Consumer.objects.all()
+        serializer = ConsumerSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
+
     @detail_route(permission_classes=[IsAuthenticated, ])
     def favorite_shops(self, request, pk=None):
         """
