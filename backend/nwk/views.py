@@ -7,6 +7,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from nwk.serializers import *
 import itertools
 
@@ -98,6 +99,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAdminUser, ]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -106,6 +108,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    permission_classes = [IsAdminUser, ]
 
 
 class MallViewSet(viewsets.ModelViewSet):
@@ -135,11 +138,9 @@ class RetailViewSet(viewsets.ModelViewSet):
         # TODO: get number of promotions of each retail from cache
         # if category is not None:
         #     queryset = Retail.objects.filter(
-
         #         category=category)
         # else:
         #     queryset = Retail.objects.filter(
-
         #         )
         # serializer = RetailSerializer(
         #     queryset,
@@ -265,12 +266,27 @@ class ConsumerViewSet(viewsets.ModelViewSet):
     @detail_route()
     def grab_history(self, request, pk=None):
         """
-        Returns list of grab promotion entries for a given user
+        Returns list of acknowledged grab promotion entries for a given user
         """
         consumer = self.get_object()
         queryset = GrabPromotion.objects.filter(
             consumer=consumer,
             is_approved=True)
+        serializer = GrabPromotionSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
+
+    @detail_route()
+    def grab_cart(self, request, pk=None):
+        """
+        Returns list of pending grab promotion entries for a given user
+        """
+        consumer = self.get_object()
+        queryset = GrabPromotion.objects.filter(
+            consumer=consumer,
+            is_approved=None)
         serializer = GrabPromotionSerializer(
             queryset,
             many=True,
