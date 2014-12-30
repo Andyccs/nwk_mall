@@ -141,7 +141,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
+
     'PAGINATE_BY': 10,
+
+    # Allow client to override, using `?page_size=xxx`.
+    'PAGINATE_BY_PARAM': 'page_size',
+
+    # Maximum limit allowed when using `?page_size=xxx`.
+    'MAX_PAGINATE_BY': 100,
+
     # 'DEFAULT_FILTER_BACKENDS': (
     #       'rest_framework.filters.DjangoFilterBackend',),
 }

@@ -2,6 +2,8 @@ from django.shortcuts import render_to_response
 from django.utils import timezone
 from django.http import Http404
 from django.template import RequestContext
+from django.core.paginator import Paginator
+from rest_framework.pagination import PaginationSerializer
 from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, status
@@ -88,7 +90,23 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def list(self, request):
+        username = self.request.QUERY_PARAMS.get('username', None)
+        if username is not None:
+            try:
+                queryset = User.objects.filter(username=username)
+            except User.DoesNotExist:
+                return Response(
+                    "User does not exist", status=status.HTTP_404_NOT_FOUND)
+        else:
+            queryset = User.objects.all()
+        serializer = UserSerializer(
+            queryset,
+            many=True,
+            context={'request': request})
+        return Response(serializer.data)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -176,6 +194,7 @@ class PromotionViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def list(self, request):
+        # TODO: add pagination
         queryset = list(itertools.chain(
             PromotionGeneral.objects.all(),
             PromotionDiscount.objects.all(),
@@ -223,23 +242,6 @@ class ConsumerViewSet(viewsets.ModelViewSet):
     queryset = Consumer.objects.all()
     serializer_class = ConsumerSerializer
     permission_classes = [IsAuthenticated, ]
-
-    def list(self, request):
-        username = self.request.QUERY_PARAMS.get('username', None)
-        if username is not None:
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return Response(
-                    "User does not exist", status=status.HTTP_404_NOT_FOUND)
-            queryset = Consumer.objects.filter(user=user)
-        else:
-            queryset = Consumer.objects.all()
-        serializer = ConsumerSerializer(
-            queryset,
-            many=True,
-            context={'request': request})
-        return Response(serializer.data)
 
     @detail_route(permission_classes=[IsAuthenticated, ])
     def favorite_shops(self, request, pk=None):
