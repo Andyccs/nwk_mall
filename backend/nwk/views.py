@@ -5,9 +5,10 @@ from django.template import RequestContext
 from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, status
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope, TokenHasScope
 from nwk.serializers import *
 import itertools
 
@@ -87,9 +88,11 @@ def register(request):
     # Render the template depending on the context.
     return render_to_response(
         'register.html',
-        {'user_form': user_form,
-         'profile_form': profile_form,
-         'registered': registered},
+        {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'registered': registered,
+        },
         context)
 
 
@@ -114,11 +117,13 @@ class GroupViewSet(viewsets.ModelViewSet):
 class MallViewSet(viewsets.ModelViewSet):
     queryset = Mall.objects.all()
     serializer_class = MallSerializer
+    permission_classes = [IsAdminUser, ]
 
 
 class RetailViewSet(viewsets.ModelViewSet):
     queryset = Retail.objects.all()
     serializer_class = RetailSerializer
+    permission_classes = [IsAuthenticated, ]
 
     def list(self, request):
         category = self.request.QUERY_PARAMS.get('category', None)
@@ -132,24 +137,7 @@ class RetailViewSet(viewsets.ModelViewSet):
             context={'request': request})
         return Response(serializer.data)
 
-    @list_route()
-    def with_promotion(self,request):
-        category = self.request.QUERY_PARAMS.get('category', None)
-        # TODO: get number of promotions of each retail from cache
-        # if category is not None:
-        #     queryset = Retail.objects.filter(
-        #         category=category)
-        # else:
-        #     queryset = Retail.objects.filter(
-        #         )
-        # serializer = RetailSerializer(
-        #     queryset,
-        #     many=True,
-        #     context={'request': request})
-        # return Response(serializer.data)
-        pass
-
-    @detail_route()
+    @detail_route(permission_classes=[IsAuthenticated, ])
     def all_promotions(self, request, pk=None):
         """
         Returns all promotions for a given retailer
@@ -166,7 +154,7 @@ class RetailViewSet(viewsets.ModelViewSet):
             context={'request': request})
         return Response(serializer.data)
 
-    @detail_route()
+    @detail_route(permission_classes=[IsAuthenticated, ])
     def active_promotions(self, request, pk=None):
         """
         Returns active promotions for a given retailer
@@ -196,14 +184,10 @@ class RetailViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# class PromotionTypeViewSet(viewsets.ReadOnlyModelViewSet):
-#     queryset = PromotionType.objects.all()
-#     serializer_class = PromotionTypeSerializer
-
-
 class PromotionViewSet(viewsets.ModelViewSet):
     queryset = Promotion.objects.all()
     serializer_class = PromotionSerializer
+    permission_classes = [IsAuthenticated, ]
 
     def list(self, request):
         queryset = list(itertools.chain(
@@ -217,7 +201,7 @@ class PromotionViewSet(viewsets.ModelViewSet):
             context={'request': request})
         return Response(serializer.data)
 
-    @detail_route()
+    @detail_route(permission_classes=[IsAdminUser, ])
     def grab_list(self, request, pk=None):
         """
         Returns list of grab promotion entries for a given promotion
@@ -234,23 +218,27 @@ class PromotionViewSet(viewsets.ModelViewSet):
 class PromotionReductionViewSet(viewsets.ModelViewSet):
     queryset = PromotionReduction.objects.all()
     serializer_class = PromotionReductionSerializer
+    permission_classes = [IsAuthenticated, ]
 
 
 class PromotionDiscountViewSet(viewsets.ModelViewSet):
     queryset = PromotionDiscount.objects.all()
     serializer_class = PromotionDiscountSerializer
+    permission_classes = [IsAuthenticated, ]
 
 
 class PromotionGeneralViewSet(viewsets.ModelViewSet):
     queryset = PromotionGeneral.objects.all()
     serializer_class = PromotionGeneralSerializer
+    permission_classes = [IsAuthenticated, ]
 
 
 class ConsumerViewSet(viewsets.ModelViewSet):
     queryset = Consumer.objects.all()
     serializer_class = ConsumerSerializer
+    permission_classes = [IsAuthenticated, ]
 
-    @detail_route()
+    @detail_route(permission_classes=[IsAuthenticated, ])
     def favorite_shops(self, request, pk=None):
         """
         Returns list of favorite retail entries for a given user
@@ -263,7 +251,7 @@ class ConsumerViewSet(viewsets.ModelViewSet):
             context={'request': request})
         return Response(serializer.data)
 
-    @detail_route()
+    @detail_route(permission_classes=[IsAuthenticated, ])
     def grab_history(self, request, pk=None):
         """
         Returns list of acknowledged grab promotion entries for a given user
@@ -278,7 +266,7 @@ class ConsumerViewSet(viewsets.ModelViewSet):
             context={'request': request})
         return Response(serializer.data)
 
-    @detail_route()
+    @detail_route(permission_classes=[IsAuthenticated, ])
     def grab_cart(self, request, pk=None):
         """
         Returns list of pending grab promotion entries for a given user
@@ -297,6 +285,7 @@ class ConsumerViewSet(viewsets.ModelViewSet):
 class GrabPromotionsViewSet(viewsets.ModelViewSet):
     queryset = GrabPromotion.objects.all()
     serializer_class = GrabPromotionSerializer
+    permission_classes = [IsAuthenticated, ]
 
     def get_grab_promotion(self, pk):
         try:
@@ -341,3 +330,4 @@ class GrabPromotionsViewSet(viewsets.ModelViewSet):
 class ApplicationViewSet(viewsets.ModelViewSet):
     queryset = Application.objects.all()
     serializer_class = ApplicationSerializer
+    permission_classes = [IsAdminUser, ]
