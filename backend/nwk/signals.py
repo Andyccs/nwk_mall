@@ -5,14 +5,14 @@ from nwk.models import *
 
 
 # auto add user to groups on save
-@receiver(post_save, Consumer)
+@receiver(post_save, sender=Consumer)
 def callback_customer_update(sender, instance=None, created=False, **kwargs):
     if created:
         user = instance.user
         user.groups.add(Group.objects.get(name=GROUP_CONSUMER))
 
 
-@receiver(post_save, Retail)
+@receiver(post_save, sender=Retail)
 def callback_retail_update(sender, instance=None, created=False, **kwargs):
     if created:
         user = instance.user

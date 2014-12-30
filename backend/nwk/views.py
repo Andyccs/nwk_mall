@@ -141,8 +141,16 @@ class RetailViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         category = self.request.QUERY_PARAMS.get('category', None)
-        if category is not None:
+        location_level = self.request.QUERY_PARAMS.get('location_level', None)
+        if category is not None and location_level is not None:
+            queryset = Retail.objects.filter(
+                category=category,
+                location_level=location_level
+                )
+        elif category is not None:
             queryset = Retail.objects.filter(category=category)
+        elif location_level is not None:
+            queryset = Retail.objects.filter(location_level=location_level)
         else:
             queryset = Retail.objects.all()
         serializer = RetailSerializer(
