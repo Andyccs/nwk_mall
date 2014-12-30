@@ -122,7 +122,7 @@ class Consumer(models.Model):
 
     # The additional attributes we wish to include.
     website = models.URLField(blank=True)
-    picture = models.URLField(blank=True)
+    picture = models.FileField(upload_to='USER/CONSUMER/PICTURE/', blank=True)
     point = models.PositiveIntegerField(default=0)
 
     def __str__(self):

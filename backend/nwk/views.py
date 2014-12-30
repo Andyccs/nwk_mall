@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.utils import timezone
-from django.http import HttpResponse, Http404
+from django.http import Http404
 from django.template import RequestContext
 from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
@@ -8,35 +8,20 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope, TokenHasScope
+# from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope,
+                                                 # TokenHasScope
 from nwk.serializers import *
 import itertools
 
 
-# TODO: add method to get promotion from all 3 tables
-# def get_all_promotions(retail=None):
-#     if retail:
-#         pass
-#     else:
-#         p_discount = PromotionDiscount.objects.all()
-#         p_general = PromotionGeneral.objects.all()
-#     p_discount_serializer = PromotionDiscountSerializer(p_discount)
-#     p_general_serializer = PromotionGeneralSerializer(p_general)
-#     promotions = []
-#     promotions += p_discount_serializer.data
-#     return Response()
-
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the nwk index.\n")
-
-
 def register(request):
-    # Like before, get the request's context.
+    '''
+    API endpoint for customer registration
+    '''
     context = RequestContext(request)
 
-    # A boolean value for telling the template whether the registration was successful.
-    # Set to False initially. Code changes value to True when registration succeeds.
+    # A boolean value: whether the registration was successful.
+    # Set to False initially. True when registration succeeds.
     registered = False
 
     # If it's a HTTP POST, we're interested in processing form data.
@@ -56,21 +41,18 @@ def register(request):
             user.set_password(user.password)
             user.save()
 
-            # Now sort out the UserProfile instance.
-            # Since we need to set the user attribute ourselves, we set commit=False.
-            # This delays saving the model until we're ready to avoid integrity problems.
+            # Need to set the user attribute ourselves, we set commit=False.
+            # Add delay to avoid integrity problems.
             profile = profile_form.save(commit=False)
             profile.user = user
 
-            # Did the user provide a profile picture?
-            # If so, we need to get it from the input form and put it in the UserProfile model.
-            # if 'picture' in request.FILES:
-            #     profile.picture = request.FILES['picture']
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
 
             # Now we save the UserProfile model instance.
             profile.save()
 
-            # Update our variable to tell the template registration was successful.
+            # Update to tell template registration was successful.
             registered = True
 
         # Invalid form or forms - mistakes or something else?
@@ -84,6 +66,10 @@ def register(request):
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
+
+    if registered:
+        serializer = ConsumerSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # Render the template depending on the context.
     return render_to_response(
