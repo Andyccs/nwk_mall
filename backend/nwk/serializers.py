@@ -139,6 +139,7 @@ class ConsumerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Consumer
         fields = ('user',
+                  'id',
                   'favorite_shops',
                   'website',
                   'picture',
