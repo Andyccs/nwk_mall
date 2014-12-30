@@ -96,16 +96,26 @@ class UserViewSet(viewsets.ModelViewSet):
         username = self.request.QUERY_PARAMS.get('username', None)
         if username is not None:
             try:
-                queryset = User.objects.filter(username=username)
+                user = User.objects.get(username=username)
+                if user.groups.all()[0].name == GROUP_CONSUMER:
+                    queryset = Consumer.objects.get(user=user)
+                    serializer = ConsumerSerializer(
+                        queryset,
+                        context={'request': request})
+                elif user.groups.all()[0].name == GROUP_RETAIL:
+                    queryset = Retail.objects.get(user=user)
+                    serializer = RetailSerializer(
+                        queryset,
+                        context={'request': request})
             except User.DoesNotExist:
                 return Response(
                     "User does not exist", status=status.HTTP_404_NOT_FOUND)
         else:
             queryset = User.objects.all()
-        serializer = UserSerializer(
-            queryset,
-            many=True,
-            context={'request': request})
+            serializer = UserSerializer(
+                queryset,
+                many=True,
+                context={'request': request})
         return Response(serializer.data)
 
 

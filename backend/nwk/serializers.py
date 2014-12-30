@@ -9,6 +9,26 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username', 'email', 'groups')
 
 
+class ReadUserSerializer(serializers.Serializer):
+    def to_native(self, value):
+        if isinstance(value, Consumer):
+            a_s = ConsumerSerializer(
+                instance=value,
+                context=self.context)
+            return a_s.data
+        if isinstance(value, Retail):
+            b_s = PromotionReductionSerializer(
+                instance=value,
+                context=self.context)
+            return b_s.data
+        if isinstance(value, PromotionGeneral):
+            c_s = PromotionGeneralSerializer(
+                instance=value,
+                context=self.context)
+            return c_s.data
+        raise NotImplementedError
+
+
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group

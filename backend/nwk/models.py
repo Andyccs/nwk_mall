@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 
 
 POINT_DEFAULT = 100
+GROUP_RETAIL = "retail"
+GROUP_CONSUMER = "consumer"
 
 
 class Mall(models.Model):
