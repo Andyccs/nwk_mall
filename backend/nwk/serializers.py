@@ -126,6 +126,22 @@ class ConsumerSerializer(serializers.HyperlinkedModelSerializer):
                   )
 
 
+class ReadGrabPromotionSerializer(serializers.HyperlinkedModelSerializer):
+    consumer = ConsumerSerializer()
+    promotion = PromotionSerializer()
+
+    class Meta:
+        model = GrabPromotion
+        fields = ('id',
+                  'consumer',
+                  'promotion',
+                  'redeem_time',
+                  'is_approved',
+                  'qr_code_url',
+                  'point',
+                  )
+
+
 class GrabPromotionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GrabPromotion

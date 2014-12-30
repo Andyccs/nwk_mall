@@ -260,7 +260,7 @@ class ConsumerViewSet(viewsets.ModelViewSet):
         queryset = GrabPromotion.objects.filter(
             consumer=consumer,
             is_approved=True)
-        serializer = GrabPromotionSerializer(
+        serializer = ReadGrabPromotionSerializer(
             queryset,
             many=True,
             context={'request': request})
@@ -275,7 +275,7 @@ class ConsumerViewSet(viewsets.ModelViewSet):
         queryset = GrabPromotion.objects.filter(
             consumer=consumer,
             is_approved=None)
-        serializer = GrabPromotionSerializer(
+        serializer = ReadGrabPromotionSerializer(
             queryset,
             many=True,
             context={'request': request})
