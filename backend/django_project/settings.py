@@ -131,6 +131,7 @@ OAUTH2_PROVIDER = {
 }
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'nwk.authentication.SuperUserSessionAuthentication',
         'oauth2_provider.ext.rest_framework.OAuth2Authentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
