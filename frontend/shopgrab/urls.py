@@ -11,7 +11,8 @@ urlpatterns = patterns(
     # url(r'^retail/', retail.views.home,
         # name='home'),
     url(r'^retail/', include('retail.urls', namespace='retail')),
-    # url(r'^login/$', include('login.urls', namespace='login')),
+    url(r'^login/$', include('login.urls', namespace='login')),
     # url(r'^logout/$', include('logout.urls', namespace='logout')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include('allauth.urls')),
 )

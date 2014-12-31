@@ -1,4 +1,6 @@
 django-bootstrap3
+django-admin-bootstrapped
 requests
 slumber
 django-crispy-forms
+django-allauth

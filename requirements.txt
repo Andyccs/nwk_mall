@@ -1,8 +1,0 @@
---allow-all-external mysql-connector-python
-djangorestframework==2.4.3
-django==1.7
-markdown
-django-filter
-django-oauth-toolkit
-requests
-mysql-connector-python==2.0.2

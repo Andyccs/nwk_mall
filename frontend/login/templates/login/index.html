@@ -1,0 +1,40 @@
+<script type="text/javascript" src="/static/js/jquery.js"> </script>
+
+<script>
+( function($) {
+    $(document).ready(function() {
+        $("#post-button").click(function()
+        {
+            $("#loginForm").submit(function(e)
+            {
+                var postData = $(this).serializeArray();
+                var formURL = $(this).attr("action");
+                console.log(JSON.stringify(postData))
+                $.ajax(
+                {
+                    url : formURL,
+                    type: "POST",
+                    data : postData,
+                    withCredentials: true,
+                    success:function(data, textStatus, jqXHR) {
+                        alert(JSON.stringify(data));
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                         alert(jqXHR + " - " + textStatus + " - " + errorThrown);
+                    }
+                });
+                e.preventDefault();	//STOP default action
+            });
+
+            $("#loginForm").submit(); //SUBMIT FORM
+        });
+    } )
+} ) ( jQuery );
+</script>
+
+<form name="loginForm" id="loginForm" action="http://127.0.0.1:8000/auth/" method="POST">
+
+    <input type="text" name="user" id="user"/>
+    <input type="text" name="password" id="password"/>
+</form>
+<button id="post-button">Login</button>
