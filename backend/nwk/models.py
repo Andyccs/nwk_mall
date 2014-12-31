@@ -154,6 +154,8 @@ class GrabPromotion(models.Model):
         null=True,
         choices=BOOLEAN_CHOICES)
 
+    __original_is_approved = None
+
     qr_code_url = models.URLField(blank=True)
 
     point = models.PositiveIntegerField(
@@ -181,12 +183,17 @@ class GrabPromotion(models.Model):
                 now + duration,
                 timezone.get_default_timezone())
 
-            # TODO: set QR code
-
             # set point
             self.point = POINT_DEFAULT
 
-        return super(GrabPromotion, self).save(*args, **kwargs)
+        # auto add consumer point on successful redeem
+        if self.__original_is_approved is None and self.is_approved:
+            consumer = self.consumer
+            consumer.point = consumer.point + self.point
+            consumer.save()
+
+        super(GrabPromotion, self).save(*args, **kwargs)
+        self.__original_is_approved = self.is_approved
 
     def __str__(self):
         return "%s by %s" % (self.promotion, self.customer)
