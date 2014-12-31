@@ -43,15 +43,17 @@ python manage.py flush
 
 OAuth2
 ======
-#Application registration
-Go to /o/applications/ to register a new application
-Take note of the client_id and client_secret
+##Application registration
+Go to /o/applications/ to register a new application. Take note of the client_id and client_secret.
 
+```
 Client type: confidential
 Grant type: Resource-owned password based
+```
 
-#Getting access token
-Follow the convention specified in the test_oauth_consumer.py file for requesting access token
+##Getting access token
+Follow the convention specified in the test_oauth_consumer.py file for requesting access token.
+
 Need to send:
 * grant_type
 * username
@@ -59,6 +61,8 @@ Need to send:
 * client_id of application
 * client_secret of application
 
-#API Usage
+##API Usage
 Add this in the request header of API:
+```
 Authorization: Bearer *access_token*
+```
