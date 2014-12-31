@@ -44,11 +44,32 @@ python manage.py flush
 OAuth2
 ======
 ##Application registration
-Go to /o/applications/ to register a new application. Take note of the client_id and client_secret.
+Go to `/admin` to login as administrator. 
+
+If you're using `fake_data`, then you can sign in using:
+```
+username: admin
+password: admin
+```
+
+Else you need to create a super user in command line
+```
+python manage.py createsuperuser
+//Then follow the instruction
+```
+
+Go to `/o/applications/` to register a new application. Take note of the client_id and client_secret.
 
 ```
+Name: <Just Give a Name>
 Client type: confidential
 Grant type: Resource-owned password based
+```
+
+If you're using fake_data and debug version of the Android application, then you should also input the following in the `/o/applications/` form
+```
+Client id : kF0oFIZP7@uiMABQzHLirc8q8hUsz!F!peyUJEV;
+Client secret: umK2JXvw?LcDH@KX?5!c8yjBtz-2caNiTLoB6ij6keIYAQEI39UGtv6qaRyuAI8L0wWS9E8!cy!btNxdUIiqZ?1SGcpSv9?jTyjnm;csarQuOpbai3Ccc.th2=G_YVFg
 ```
 
 ##Getting access token

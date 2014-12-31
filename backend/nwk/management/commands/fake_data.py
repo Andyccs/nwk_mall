@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User, Group
 from nwk.models import Retail, Mall, Consumer, PromotionReduction, PromotionDiscount, PromotionGeneral
 from django.conf import settings
-
+from django.contrib.auth import get_user_model
 
 CAT_FOOD = 'FOOD'
 CAT_FASHION = 'FASHION'
@@ -235,3 +235,11 @@ class Command(BaseCommand):
         for consumer in consumer_list:
             name = consumer['username']
             self.add_consumers(name, name, name+"@gmail")
+
+        #Create super user
+        self.UserModel = get_user_model()
+        user_data = {}
+        user_data['username'] = 'admin'
+        user_data['password'] = 'admin'
+        user_data['email']='admin@example.com'
+        self.UserModel._default_manager.db_manager("default").create_superuser(**user_data)
