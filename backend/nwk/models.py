@@ -138,9 +138,9 @@ BOOLEAN_CHOICES = (
 
 
 class GrabPromotion(models.Model):
-    class Meta:
-        # does not allow multiple promotion grabbing
-        unique_together = ['consumer', 'promotion']
+    # class Meta:
+    #     # does not allow multiple promotion grabbing
+    #     unique_together = ['consumer', 'promotion']
 
     consumer = models.ForeignKey(Consumer)
     promotion = models.ForeignKey(Promotion)
