@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User, Group
 from nwk.models import Retail, Mall, Consumer, PromotionReduction, PromotionDiscount, PromotionGeneral
 from django.conf import settings
-
+from django.contrib.auth import get_user_model
 
 CAT_FOOD = 'FOOD'
 CAT_FASHION = 'FASHION'
@@ -48,6 +48,7 @@ class Command(BaseCommand):
         retail_list = [
             {
                 "retail": "Challenger",
+                "level":1,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-a165def6-f908-43b6-83e8-43264eeb6b4c-challenger.jpg",
                 "category": CAT_LIFESTYLE,
                 "promotions":[
@@ -69,6 +70,7 @@ class Command(BaseCommand):
                 },
             {
                 "retail": "Channel",
+                "level":1,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-756a4b0a-7b28-450a-8e38-006fed78ab1f-chanel_logo.gif",
                 "category": CAT_FASHION,
                 "promotions": [
@@ -89,6 +91,7 @@ class Command(BaseCommand):
             },
             {
                 "retail": "Mr.Bean",
+                "level":1,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-75d1908f-f11d-4ed9-9fa5-089671267c21-1344595157_6.jpg",
                 "category": CAT_FOOD,
                 "promotions": [
@@ -103,6 +106,7 @@ class Command(BaseCommand):
             },
             {
                 "retail": "G2000",
+                "level":1,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-6f3964d6-ceb5-44d2-beca-c34d4c54389e-g2000.gif",
                 "category": CAT_FASHION,
                 "promotions": [
@@ -117,6 +121,7 @@ class Command(BaseCommand):
                 },
             {
                 "retail": "Pizza Hut",
+                "level":1,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-42718607-4611-40ef-8214-de0354310d88-brand.gif",
                 "category": CAT_FOOD,
                 "promotions": [
@@ -131,12 +136,14 @@ class Command(BaseCommand):
                 },
             {
                 "retail": "McDonald's",
+                "level":1,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-b2aeae9e-0125-4bb1-b35c-541cae843691-6ERHbJBN.jpeg",
                 "category": CAT_FOOD,
                 "promotions": []
                 },
             {
                 "retail": "Subway",
+                "level":2,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-b37c62a8-3390-4037-827d-e7c07ac10019-Subway-Logo.jpg",
                 "category": CAT_FOOD,
                 "promotions": [
@@ -150,12 +157,14 @@ class Command(BaseCommand):
                 },
             {
                 "retail": "Nike",
+                "level":2,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-d7218c67-06a9-46b9-b15d-ad288a60726d-nike-logo-black.jpg",
                 "category": CAT_LIFESTYLE,
                 "promotions": []
             },
             {
                 "retail": "Starbuck",
+                "level":2,
                 "logo_url": "http://files.parsetfss.com/ba2cde20-dd78-4c86-9bda-e4db4bf2b973/tfss-f08bb1a6-90c9-4607-a971-9fcb167b23e6-starbuck_logo.png",
                 "category": CAT_FOOD,
                 "promotions":[
@@ -190,8 +199,9 @@ class Command(BaseCommand):
             name = retail["retail"]
             logo = retail["logo_url"]
             category = retail["category"]
+            level = retail["level"]
             real_retail = self.add_retail(name, name, name+"@gmail.com", name,
-                                          1, 201, logo, category)
+                                          level, 201, logo, category)
             for promotion in retail['promotions']:
                 if(promotion.get("original_price")):
                     p = PromotionReduction(
@@ -225,3 +235,11 @@ class Command(BaseCommand):
         for consumer in consumer_list:
             name = consumer['username']
             self.add_consumers(name, name, name+"@gmail")
+
+        #Create super user
+        self.UserModel = get_user_model()
+        user_data = {}
+        user_data['username'] = 'admin'
+        user_data['password'] = 'admin'
+        user_data['email']='admin@example.com'
+        self.UserModel._default_manager.db_manager("default").create_superuser(**user_data)
