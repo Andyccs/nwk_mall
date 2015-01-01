@@ -7,3 +7,4 @@ django-filter
 django-oauth-toolkit
 requests
 mysql-connector-python==2.0.2
+django-guardian

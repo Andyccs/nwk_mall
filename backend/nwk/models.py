@@ -36,7 +36,7 @@ class Retail(models.Model):
     mall = models.ForeignKey(Mall)
 
     shop_name = models.CharField(max_length=30)
-    logo_url = models.URLField(blank=True)
+    logo = models.FileField(upload_to='user/retail/img/', blank=True)
     category = models.CharField(
         max_length=20,
         choices=PROMOTION_CATEGORIES,
@@ -124,7 +124,7 @@ class Consumer(models.Model):
 
     # The additional attributes we wish to include.
     website = models.URLField(blank=True)
-    picture = models.FileField(upload_to='USER/CONSUMER/PICTURE/', blank=True)
+    picture = models.FileField(upload_to='user/consumer/img/', blank=True)
     point = models.PositiveIntegerField(default=0)
 
     def __str__(self):

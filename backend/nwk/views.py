@@ -9,7 +9,11 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+
+from rest_framework.permissions import (IsAuthenticated, IsAdminUser,
+                                        DjangoObjectPermissions)
+
+from nwk.permissions import *
 # from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope,
                                                  # TokenHasScope
 from nwk.serializers import *
@@ -308,7 +312,7 @@ class ConsumerViewSet(viewsets.ModelViewSet):
 class GrabPromotionsViewSet(viewsets.ModelViewSet):
     queryset = GrabPromotion.objects.all()
     serializer_class = GrabPromotionSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [DjangoObjectPermissions, ]
 
     def get_grab_promotion(self, pk):
         try:

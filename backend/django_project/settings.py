@@ -37,8 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'oauth2_provider',
     'rest_framework',
+    'oauth2_provider',
+    'guardian',
     'nwk',
 )
 
@@ -154,6 +155,13 @@ REST_FRAMEWORK = {
     # 'DEFAULT_FILTER_BACKENDS': (
     #       'rest_framework.filters.DjangoFilterBackend',),
 }
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # default
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+ANONYMOUS_USER_ID = -1
 
 DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
 
