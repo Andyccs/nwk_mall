@@ -28,6 +28,5 @@ def callback_retail_update(sender, instance=None, created=False, **kwargs):
 def callback_grab_promo_update(sender, instance=None, created=False, **kwargs):
     if created:
         retail_user = instance.promotion.retail.user
-        assign_perm('add_grabpromotion', retail_user, instance)
-        assign_perm('change_grabpromotion', retail_user, instance)
-        assign_perm('delete_grabpromotion', retail_user, instance)
+        assign_perm('nwk.change_grabpromotion', retail_user, instance)
+        assign_perm('nwk.delete_grabpromotion', retail_user, instance)

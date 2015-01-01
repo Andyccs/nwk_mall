@@ -322,8 +322,13 @@ class GrabPromotionsViewSet(viewsets.ModelViewSet):
             raise Http404
 
     def update(self, request, pk=None):
+        print(request.user)
         try:
             grab_promotion = self.get_grab_promotion(pk=pk)
+            if request.user != grab_promotion.promotion.retail.user:
+                return Response(
+                    "Current retail has no authority to update this entry.",
+                    status=status.HTTP_403_FORBIDDEN)
         except Http404:
             return Response(
                 "Entry does not exist",

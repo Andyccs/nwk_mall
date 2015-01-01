@@ -36,7 +36,7 @@ class Retail(models.Model):
     mall = models.ForeignKey(Mall)
 
     shop_name = models.CharField(max_length=30)
-    logo = models.FileField(upload_to='user/retail/img/', blank=True)
+    logo_url = models.URLField(blank=True)
     category = models.CharField(
         max_length=20,
         choices=PROMOTION_CATEGORIES,
