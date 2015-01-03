@@ -123,9 +123,8 @@ class Consumer(models.Model):
     favorite_shops = models.ManyToManyField(Retail, blank=True)
 
     # The additional attributes we wish to include.
-    website = models.URLField(blank=True)
     picture = models.FileField(upload_to='user/consumer/img/', blank=True)
-    point = models.PositiveIntegerField(default=0)
+    point = models.PositiveIntegerField(default=0, blank=True, editable=False)
 
     def __str__(self):
         return "%s" % self.user

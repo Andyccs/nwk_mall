@@ -37,7 +37,6 @@ class Command(BaseCommand):
 
         real_customer = Consumer(
             user=consumer,
-            website="",
             picture="http://twimgs.com/informationweek/galleries/automated/879/01_Steve-Jobs_full.jpg",
             point=0)
         real_customer.save()

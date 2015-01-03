@@ -1,17 +1,13 @@
-from django.shortcuts import render_to_response
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.http import Http404
-from django.template import RequestContext
-from django.core.paginator import Paginator
-from rest_framework.pagination import PaginationSerializer
-from nwk.forms import UserForm, UserProfileForm
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, status
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, api_view
 from rest_framework.response import Response
 
 from rest_framework.permissions import (IsAuthenticated, IsAdminUser,
-                                        DjangoObjectPermissions)
+                                        DjangoObjectPermissions, AllowAny)
 
 from nwk.permissions import *
 # from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope,
@@ -20,72 +16,31 @@ from nwk.serializers import *
 import itertools
 
 
+@api_view(['POST'])
 def register(request):
-    '''
-    API endpoint for customer registration
-    '''
-    context = RequestContext(request)
-
-    # A boolean value: whether the registration was successful.
-    # Set to False initially. True when registration succeeds.
-    registered = False
-
-    # If it's a HTTP POST, we're interested in processing form data.
-    if request.method == 'POST':
-        # Attempt to grab information from the raw form information.
-        # Note that we make use of both UserForm and UserProfileForm.
-        user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
-
-        # If the two forms are valid...
-        if user_form.is_valid() and profile_form.is_valid():
-            # Save the user's form data to the database.
-            user = user_form.save()
-
-            # Now we hash the password with the set_password method.
-            # Once hashed, we can update the user object.
-            user.set_password(user.password)
-            user.save()
-
-            # Need to set the user attribute ourselves, we set commit=False.
-            # Add delay to avoid integrity problems.
-            profile = profile_form.save(commit=False)
-            profile.user = user
-
-            if 'picture' in request.FILES:
-                profile.picture = request.FILES['picture']
-
-            # Now we save the UserProfile model instance.
-            profile.save()
-
-            # Update to tell template registration was successful.
-            registered = True
-
-        # Invalid form or forms - mistakes or something else?
-        # Print problems to the terminal.
-        # They'll also be shown to the user.
-        else:
-            print(user_form.errors, profile_form.errors)
-
-    # Not a HTTP POST, so we render our form using two ModelForm instances.
-    # These forms will be blank, ready for user input.
-    else:
-        user_form = UserForm()
-        profile_form = UserProfileForm()
-
-    if registered:
-        serializer = ConsumerSerializer(profile)
+    """
+    API endpoint that allows registration of consumers.
+    """
+    VALID_USER_FIELDS = [f.name for f in get_user_model()._meta.fields]
+    DEFAULTS = {
+        # you can define any defaults that you would like for the user, here
+    }
+    user_data = {field: data for (field, data) in request.DATA.items() if field in VALID_USER_FIELDS}
+    user_data.update(DEFAULTS)
+    try:
+        user = get_user_model().objects.create_user(
+            **user_data)
+        consumer = Consumer(user=user)
+        if 'picture' in request.FILES:
+            consumer.picture = request.FILES['picture']
+        consumer.save()
+        serializer = ConsumerSerializer(
+            instance=consumer,
+            context={'request': request}
+            )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # Render the template depending on the context.
-    return render_to_response(
-        'register.html',
-        {
-            'user_form': user_form,
-            'profile_form': profile_form,
-            'registered': registered,
-        },
-        context)
+    except ValueError as e:
+        return Response(e.message, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -94,7 +49,12 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, IsStaffOrTargetUser, ]
+
+    def get_permissions(self):
+        # allow non-authenticated user to create via POST
+        return (AllowAny() if self.request.method == 'POST'
+                else IsStaffOrTargetUser()),
 
     def list(self, request):
         username = self.request.QUERY_PARAMS.get('username', None)
@@ -263,7 +223,12 @@ class PromotionGeneralViewSet(viewsets.ModelViewSet):
 class ConsumerViewSet(viewsets.ModelViewSet):
     queryset = Consumer.objects.all()
     serializer_class = ConsumerSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, IsStaffOrTargetUser, ]
+
+    def get_permissions(self):
+        # allow non-authenticated user to create via POST
+        return (AllowAny() if self.request.method == 'POST'
+                else IsStaffOrTargetUser()),
 
     @detail_route(permission_classes=[IsAuthenticated, ])
     def favorite_shops(self, request, pk=None):
