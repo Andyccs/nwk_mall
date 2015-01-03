@@ -3,15 +3,13 @@ from django.utils import timezone
 from django.http import Http404
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, status
-from rest_framework.decorators import detail_route, api_view
+from rest_framework.decorators import detail_route, api_view, parser_classes
 from rest_framework.response import Response
-
+from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import (IsAuthenticated, IsAdminUser,
                                         DjangoObjectPermissions, AllowAny)
 
 from nwk.permissions import *
-# from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope,
-                                                 # TokenHasScope
 from nwk.serializers import *
 import itertools
 
@@ -41,6 +39,8 @@ def register(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except ValueError as e:
         return Response(e.message, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
