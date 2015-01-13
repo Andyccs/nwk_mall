@@ -11,7 +11,7 @@ First, you must install mysql server
 mysqladmin -u root password root
 
 #To run mysql server:
-mysqld
+sudo mysqld_safe
 
 #Then, create a new database:
 mysql -u root -p root -e "CREATE DATABASE IF NOT EXISTS shopgrab_db;"
