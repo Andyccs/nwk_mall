@@ -14,7 +14,7 @@ mysqladmin -u root password root
 mysqld
 
 #Then, create a new database:
-mysql -uroot -p root -e "CREATE DATABASE IF NOT EXISTS shopgrab_db;"
+mysql -u root -p root -e "CREATE DATABASE IF NOT EXISTS shopgrab_db;"
 
 #Use pip to install all dependencies
 pip install -r requirements.txt

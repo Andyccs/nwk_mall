@@ -48,26 +48,6 @@ class Retail(models.Model):
         return "%s" % self.shop_name
 
 
-# class PromotionType(models.Model):
-#     GENERAL = 'GEN'
-#     DISCOUNT = 'DIS'
-#     REDUCTION = 'RED'
-#     PROMOTION_TYPES = (
-#         (GENERAL, 'GENERAL'),
-#         (DISCOUNT, 'DISCOUNT'),
-#         (REDUCTION, 'REDUCTION')
-#         )
-
-#     promotion_type = models.CharField(
-#         max_length=3,
-#         choices=PROMOTION_TYPES,
-#         default=GENERAL,
-#         primary_key=True)
-
-#     def __str__(self):
-#         return "%s" % self.promotion_type
-
-
 class Promotion(models.Model):
     retail = models.ForeignKey(Retail)
 

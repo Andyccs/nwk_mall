@@ -49,12 +49,12 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsStaffOrTargetUser, ]
+    permission_classes = [IsAuthenticated, ]
 
-    def get_permissions(self):
-        # allow non-authenticated user to create via POST
-        return (AllowAny() if self.request.method == 'POST'
-                else IsStaffOrTargetUser()),
+    # def get_permissions(self):
+    #     # allow non-authenticated user to create via POST
+    #     return (AllowAny() if self.request.method == 'POST'
+    #             else IsStaffOrTargetUser()),
 
     def list(self, request):
         username = self.request.QUERY_PARAMS.get('username', None)
@@ -176,7 +176,6 @@ class PromotionViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def list(self, request):
-        # TODO: add pagination
         queryset = list(itertools.chain(
             PromotionGeneral.objects.all(),
             PromotionDiscount.objects.all(),
@@ -223,12 +222,7 @@ class PromotionGeneralViewSet(viewsets.ModelViewSet):
 class ConsumerViewSet(viewsets.ModelViewSet):
     queryset = Consumer.objects.all()
     serializer_class = ConsumerSerializer
-    permission_classes = [IsAuthenticated, IsStaffOrTargetUser, ]
-
-    def get_permissions(self):
-        # allow non-authenticated user to create via POST
-        return (AllowAny() if self.request.method == 'POST'
-                else IsStaffOrTargetUser()),
+    permission_classes = [IsAuthenticated]
 
     @detail_route(permission_classes=[IsAuthenticated, ])
     def favorite_shops(self, request, pk=None):
