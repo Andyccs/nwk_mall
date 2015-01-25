@@ -273,6 +273,11 @@ class GrabPromotionsViewSet(viewsets.ModelViewSet):
     serializer_class = GrabPromotionSerializer
     permission_classes = [DjangoObjectPermissions, ]
 
+    def get_permissions(self):
+        # allow all authenticated user to create via POST
+        return (IsAuthenticated() if self.request.method == 'POST'
+                else DjangoObjectPermissions()),
+
     def get_grab_promotion(self, pk):
         try:
             grab_promotion = GrabPromotion.objects.get(pk=pk)

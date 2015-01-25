@@ -3,18 +3,39 @@ from django.contrib.auth.models import User, Group
 from nwk.models import Retail, Mall, Consumer, PromotionReduction, PromotionDiscount, PromotionGeneral
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from oauth2_provider.models import Application
+
 
 CAT_FOOD = 'FOOD'
 CAT_FASHION = 'FASHION'
 CAT_LIFESTYLE = 'LIFESTYLE'
 CAT_OTHER = 'OTHER'
 
+OAUTH_TEST_ID = "kF0oFIZP7@uiMABQzHLirc8q8hUsz!F!peyUJEV;"
+OAUTH_TEST_SECRET ="umK2JXvw?LcDH@KX?5!c8yjBtz-2caNiTLoB6ij6keIYAQEI39UGtv6qaRyuAI8L0wWS9E8!cy!btNxdUIiqZ?1SGcpSv9?jTyjnm;csarQuOpbai3Ccc.th2=G_YVFg"
 
 class Command(BaseCommand):
+    def add_application(self, user,
+        client_id='', client_secret='',
+        client_type=Application.CLIENT_CONFIDENTIAL,
+        authorization_grant_type=Application.GRANT_PASSWORD):
+        if client_id and client_secret:
+            Application.objects.create(
+                user=user,
+                client_id=client_id,
+                client_secret=client_secret,
+                client_type=client_type,
+                authorization_grant_type=authorization_grant_type)
+        else:
+            Application.objects.create(
+                user=user,
+                client_type=client_type,
+                authorization_grant_type=authorization_grant_type)
+
     def add_retail(self,
         username, password, email, shop_name, 
         location_level, location_unit, logo_url, category):
-        retail = User.objects.create_user(username,email,password)
+        retail = User.objects.create_user(username, email, password)
         retail.save()
         retail.groups.add(self.retail_group)
 
@@ -241,4 +262,9 @@ class Command(BaseCommand):
         user_data['username'] = 'admin'
         user_data['password'] = 'admin'
         user_data['email']='admin@example.com'
-        self.UserModel._default_manager.db_manager("default").create_superuser(**user_data)
+        admin = self.UserModel._default_manager.db_manager("default").create_superuser(**user_data)
+        
+        # create oauth application
+        self.add_application(
+            user=admin, client_id=OAUTH_TEST_ID,
+            client_secret=OAUTH_TEST_SECRET)

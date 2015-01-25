@@ -117,37 +117,38 @@ class PromotionGeneralSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ConsumerSerializer(serializers.HyperlinkedModelSerializer):
-    username = serializers.CharField(source='user.username')
-    password = serializers.CharField(source='user.password')
-    email = serializers.CharField(source='user.email')
+    # username = serializers.CharField(source='user.username')
+    # password = serializers.CharField(source='user.password')
+    # email = serializers.CharField(source='user.email')
 
     class Meta:
         model = Consumer
         fields = ('id',
-                  'username',
-                  'password',
-                  'email',
+                  'user',
+                  # 'username',
+                  # 'password',
+                  # 'email',
                   'favorite_shops',
                   'picture',
                   'point',
                   )
 
-    def restore_object(self, attrs, instance=None):
-        if instance:  # Update
-            instance.picture = attrs['picture']
-            user = instance.user
-            user.username = attrs['user.username']
-            user.email = attrs['user.email']
-            instance.user = user
-        else:
-            user = User.objects.create_user(
-                username=attrs['user.username'], email=attrs['user.email'])
-            user.group = Group(name="consumer")
-            user.save()
-            instance = Consumer(
-                user=user, picture=attrs['picture'])
-        user.set_password(attrs['user.password'])
-        return instance
+    # def restore_object(self, attrs, instance=None):
+    #     if instance:  # Update
+    #         instance.picture = attrs['picture']
+    #         user = instance.user
+    #         user.username = attrs['user.username']
+    #         user.email = attrs['user.email']
+    #         instance.user = user
+    #     else:
+    #         user = User.objects.create_user(
+    #             username=attrs['user.username'], email=attrs['user.email'])
+    #         user.group = Group(name="consumer")
+    #         user.save()
+    #         instance = Consumer(
+    #             user=user, picture=attrs['picture'])
+    #     user.set_password(attrs['user.password'])
+    #     return instance
 
 
 class ReadGrabPromotionSerializer(serializers.HyperlinkedModelSerializer):
